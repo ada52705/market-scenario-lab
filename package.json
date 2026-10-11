@@ -8,7 +8,8 @@
     "test:events": "node scripts/verify_multi_ui.mjs",
     "test:account": "node scripts/verify_account_ui.mjs",
     "test:month-picker": "node scripts/verify_month_picker.mjs",
-    "test:rolling": "node scripts/verify_rolling_ui.mjs"
+    "test:rolling": "node scripts/verify_rolling_ui.mjs",
+    "test:holding": "node scripts/verify_holding_ui.mjs"
   },
   "devDependencies": { "playwright": "1.62.1" }
 }

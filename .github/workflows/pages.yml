@@ -26,6 +26,8 @@ jobs:
         run: python scripts/test_rolling.py
       - name: 核对1600组滚动窗口参考结果
         run: python scripts/backtest_rolling.py
+      - name: 检查四档日历持有期与原始数据不变
+        run: python scripts/test_holding.py
       - name: 生成网站
         run: python scripts/build_site.py
       - uses: actions/configure-pages@v5

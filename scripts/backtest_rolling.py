@@ -13,9 +13,10 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 WINDOWS = (3, 5, 10, 20, 25)
 
 
-def add_month(date):
+def add_month(date, months=1):
     date = dt.date.fromisoformat(date)
-    year, month = date.year + date.month // 12, date.month % 12 + 1
+    offset = date.month - 1 + months
+    year, month = date.year + offset // 12, offset % 12 + 1
     return dt.date(year, month, min(date.day, calendar.monthrange(year, month)[1])).isoformat()
 
 
@@ -30,7 +31,8 @@ def scope_rows(asset, basis='published', start='1991-01'):
     return [row for row in asset['daily'] if row['date'] >= beginning]
 
 
-def events(asset, window=25, threshold=20, basis='published', start='1991-01'):
+def events(asset, window=25, threshold=20, basis='published', start='1991-01', holding_months=1):
+    assert holding_months in (1, 3, 6, 12)
     assert window in WINDOWS and threshold in (10, 15, 20, 25)
     rows = scope_rows(asset, basis, start)
     dates = [row['date'] for row in rows]
@@ -60,7 +62,7 @@ def events(asset, window=25, threshold=20, basis='published', start='1991-01'):
         }
         if index + 1 < len(rows):
             entry = rows[index + 1]
-            target = add_month(entry['date'])
+            target = add_month(entry['date'], holding_months)
             exit_index = bisect.bisect_left(dates, target)
             exit_row = rows[exit_index] if exit_index < len(rows) else None
             held = rows[index + 1:exit_index]
@@ -86,9 +88,9 @@ def events(asset, window=25, threshold=20, basis='published', start='1991-01'):
     return result
 
 
-def run(asset, window=25, threshold=20, basis='published', start='1991-01', cost_bps=0, capital=1000000, signals=None):
+def run(asset, window=25, threshold=20, basis='published', start='1991-01', cost_bps=0, capital=1000000, signals=None, holding_months=1):
     rows = scope_rows(asset, basis, start)
-    signals = events(asset, window, threshold, basis, start) if signals is None else signals
+    signals = events(asset, window, threshold, basis, start, holding_months) if signals is None else signals
     if not rows:
         return {'summary': None, 'daily': [], 'points': [], 'trades': [], 'ignored': []}
     # Adapt the new signal calendar to the established single-capital execution engine.
@@ -98,7 +100,7 @@ def run(asset, window=25, threshold=20, basis='published', start='1991-01', cost
         'month': rows[0]['date'][:7], 'first_date': rows[0]['date'],
         'monthly_return': 0, 'complete': True, 'published': True,
     }], 'all_month_events': adapted}, threshold, 'full', rows[0]['date'][:7], cost_bps, capital)
-    account['summary'].update(basis=basis, signal_mode='rolling', window_days=window, holding_months=1,
+    account['summary'].update(basis=basis, signal_mode='rolling', window_days=window, holding_months=holding_months,
                               waiting_signals=sum(event['entry_date'] is None for event in signals))
     by_date = {event['signal_date']: event for event in signals}
     for trade in account['trades']:

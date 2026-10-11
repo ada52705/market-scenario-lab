@@ -41,7 +41,7 @@ try {
   await choose(2008, 10);
   await checkBounds();
   await page.screenshot({path: output('month-picker-desktop-qa.png')});
-  await page.click('#month-apply');
+  await page.click('#month-apply');await page.click('#generate');
   assert.equal(await value(), '2008-10');
   assert.equal(await page.locator('#start-label').textContent(), '2008年10月');
   const asset = data.assets.find(asset => asset.id === 'sh000905');
@@ -60,19 +60,19 @@ try {
   assert.equal(await value(), '2008-10');
   await open();
   await page.click('#month-shortcuts [data-start-shortcut="2016-10"]');
-  await page.click('#month-apply');
+  await page.click('#month-apply');await page.click('#generate');
   assert.equal((await state()).events.count, 0);
   assert.equal((await state()).account.final_nav, 1);
   await open();
   await page.click('#month-shortcuts [data-start-shortcut="2026-09"]');
   assert.ok(await page.locator('#year-next').isDisabled());
   for (const month of [10, 11, 12]) assert.ok(await page.locator(`#month-grid [data-picker-month="${month}"]`).isDisabled());
-  await page.click('#month-apply');
+  await page.click('#month-apply');await page.click('#generate');
   assert.equal(await value(), '2026-09');
   await open();
   await page.click('#month-shortcuts [data-start-shortcut="1991-01"]');
   assert.ok(await page.locator('#year-prev').isDisabled());
-  await page.click('#month-apply');
+  await page.click('#month-apply');await page.click('#generate');
   assert.deepEqual(await state(), baseline);
 
   await open();
@@ -82,9 +82,9 @@ try {
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'month-apply');
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Enter');await page.click('#generate');
   assert.equal(await value(), '2016-10');
-  await page.click('#reset');
+  await page.click('#reset');await page.click('#generate');
   assert.equal(await page.locator('#start-label').textContent(), '1991年1月');
   assert.deepEqual(await state(), baseline);
 
@@ -94,13 +94,13 @@ try {
     await choose(2026, 9);
     await checkBounds();
     if (width === 390) await page.screenshot({path: output('month-picker-mobile-qa.png')});
-    await page.click('#month-apply');
+    await page.click('#month-apply');await page.click('#generate');
     assert.equal(await value(), '2026-09');
     await open();
     await choose(2008, 10);
     await page.keyboard.press('Escape');
     assert.equal(await value(), '2026-09');
-    await page.click('#reset');
+    await page.click('#reset');await page.click('#generate');
   }
   await page.setViewportSize({width: 1440, height: 1000});
   await open();

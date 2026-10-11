@@ -18,7 +18,7 @@ try{
  for(let begin=0;begin<cases.length;begin+=40){
   const batch=cases.slice(begin,begin+40);
   const actual=await page.evaluate(batch=>batch.map(config=>{
-   for(const [id,value] of Object.entries({'signal-mode':'rolling',basis:config.basis,'window-days':config.window,threshold:config.threshold,cost:config.cost_bps,start:'1991-01',capital:'100'}))document.getElementById(id).value=String(value);
+   for(const [id,value] of Object.entries({'signal-mode':'rolling',basis:config.basis,'window-days':config.window,threshold:config.threshold,cost:config.cost_bps,start:'1991-01',capital:'100','holding-months':'1'}))document.getElementById(id).value=String(value);
    const events=window.rollingQA.rawEvents(config.index_id),account=window.rollingQA.compute(config.index_id),finished=events.filter(event=>event.status==='已完成'),cost=config.cost_bps/10000,returns=finished.map(event=>(1+event.return)*(1-cost)/(1+cost)-1);
    return {summary:account.summary,event_count:events.length,completed_count:finished.length,win_rate:returns.length?returns.filter(value=>value>0).length/returns.length:null,mean_return:returns.length?returns.reduce((sum,value)=>sum+value,0)/returns.length:null,signals:config.cost_bps===0?events.map(event=>[event.signal_date,event.reference_date,event.entry_date,event.exit_date]):null};
   }),batch);
@@ -31,10 +31,10 @@ try{
   }
  }
  console.log('浏览器逐组核对通过：1600组滚动账户与事件，800组高点、信号和买卖日期');
- await page.click('#reset');
+ await page.click('#reset');await page.click('#generate');
  assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),oldSummary,'原自然月结果变化');
- await page.click('[data-mode="rolling"]');
- assert.equal(await page.locator('#holding-label').textContent(),'一个月 · 买卖均为开盘点位');
+ await page.click('[data-mode="rolling"]');await page.click('#generate');
+ assert.equal(await page.locator('#holding-months').inputValue(),'1');
  assert.ok(await page.locator('#window-field').isVisible());
  const events=await page.evaluate(()=>window.rollingQA.events()),account=await page.evaluate(()=>window.accountQA.data());
  const signal=events.find(event=>event.signal_date==='2015-06-26');
@@ -56,16 +56,16 @@ try{
  await download.saveAs(dataPath('界面导出_滚动事件.csv'));
  const csv=await fs.readFile(dataPath('界面导出_滚动事件.csv'),'utf8');
  assert.ok(csv.includes('参考高点日期')&&csv.includes('2015-06-26')&&csv.includes('2015-06-12'));
- await page.click('#start-trigger');await page.click('[data-year="2026"]');await page.click('[data-picker-month="9"]');await page.click('#month-apply');
+ await page.click('#start-trigger');await page.click('[data-year="2026"]');await page.click('[data-picker-month="9"]');await page.click('#month-apply');await page.click('#generate');
  assert.ok((await page.evaluate(()=>window.rollingQA.events())).every(event=>event.window_start>='2026-09-01'));
  for(const window of [3,5,10,20,25]){
-  await page.selectOption('#window-days',String(window));
+  await page.selectOption('#window-days',String(window));await page.click('#generate');
   assert.equal((await page.evaluate(()=>window.accountQA.summary())).window_days,window);
   assert.ok((await page.locator('#rule-text').textContent()).includes(`${window}个交易日`));
  }
- await page.click('#reset');await page.click('[data-mode="rolling"]');
+ await page.click('#reset');await page.click('#generate');await page.click('[data-mode="rolling"]');await page.click('#generate');
  await page.selectOption('#threshold','10');
- await page.click('#matrixrows [data-asset="sh000300"][data-t="15"]');
+ await page.click('#matrixrows [data-asset="sh000300"][data-t="15"]');await page.click('#generate');
  const matrixCase=cases.find(config=>config.index_id==='sh000300'&&config.basis==='published'&&config.window===25&&config.threshold===15&&config.cost_bps===0);
  assert.equal((await page.evaluate(()=>window.researchQA.snapshot())).count,matrixCase.completed_count);
  await page.selectOption('#account-view','pnl');await page.check('#account-benchmark');
@@ -75,7 +75,7 @@ try{
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'滚动模式横向溢出');
   if(width===390)await page.screenshot({path:dataPath('rolling-mobile-qa.png')});
  }
- await page.click('#reset');
+ await page.click('#reset');await page.click('#generate');
  assert.ok(await page.locator('#window-field').isHidden());
  assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),oldSummary);
  assert.deepEqual(errors,[]);
