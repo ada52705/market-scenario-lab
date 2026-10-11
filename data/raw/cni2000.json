@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>国证指数网-指数详情</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=0" />
+    <link type="text/css" rel="stylesheet" href="/css/common.css" />
+    <link type="text/css" rel="stylesheet" href="/js/lib/element-ui/theme-chalk/index.css" />
+    <link type="text/css" rel="stylesheet" href="/css/index.css" />
+    <link type="text/css" rel="stylesheet" href="/css/index-detail.css" />
+    <link type="text/css" rel="stylesheet" href="/font/iconfont.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="/image/favicon.ico" />
+    <link rel="bookmark" type="image/x-icon" href="/image/favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="/css/mobile.css" />
+    <script>
+      window.isIndex = true;
+    </script>
+    <script type="text/javascript" async="async" src="/js/lib/datePicker.js"></script>
+    <script src="/js/lib/sdkSZSE.js?v=1.0.0"></script>
+    <script src="/js/lib/jsencrypt.min.js"></script>
+    <script src="/js/lib/GFg2.js"></script>
+    <script src="/js/lib/require.js" async="async" defer data-main="/js/pages/entry-index-detail"></script>
+    <script type="text/javascript" async="async" src="/js/lib/mSlider.js"></script>
+  </head>
+
+  <body>
+    <div id="index" v-cloak>
+      <!-- 移动端时间插件弹窗 -->
+      <div class="el-dialog__wrapper" style="z-index: 2000" v-show="mobileFullScreenDialog">
+        <div class="el-dialog is-fullscreen el-dialog--center">
+          <div class="el-dialog__header">
+            <div class="m-dialog-title">选择时间段</div>
+            <el-button
+              type="danger"
+              class="el-dialog__headerbtn"
+              @click="mobileFullScreenDialog = false"
+              icon="el-icon-close"
+              circle
+              size="mini"
+            ></el-button>
+          </div>
+          <div class="el-dialog__body">
+            <div class="el-col-24" style="margin-bottom: 10px">
+              <el-input placeholder="开始日期" size="small" id="mChartDateStart" v-model="startAndEndTime[0]" suffix-icon="el-icon-date"></el-input>
+            </div>
+            <div class="el-col-24" style="margin-bottom: 10px">
+              <el-input placeholder="结束日期" size="small" id="mChartDateEnd" v-model="startAndEndTime[1]" suffix-icon="el-icon-date"></el-input>
+            </div>
+
+            <div style="margin-bottom: 10px">
+              <el-button type="primary" style="width: 100%" @click="changeChartDate(startAndEndTime)">确定</el-button>
+            </div>
+
+            <div>
+              <el-button type="info" style="width: 100%" @click="startAndEndTime = []">取消</el-button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="el-dialog__wrapper" style="z-index: 2000" v-show="fullScreenDialog">
+        <div class="el-dialog is-fullscreen el-dialog--center">
+          <div class="el-dialog__header">
+            <el-button
+              type="danger"
+              class="el-dialog__headerbtn"
+              @click="fullScreenDialog = false"
+              icon="el-icon-close"
+              circle
+              size="mini"
+            ></el-button>
+          </div>
+          <div class="el-dialog__body">
+            <div class="sub-select-box" style="min-height: auto; z-index: 99">
+              <div class="overflow-hidden">
+                <div class="select-time-selection">
+                  <div class="sub-title">日期区间</div>
+                  <div class="sub-item" :class="item == dateOptionValue ? 'active': ''" v-for="item in dateOption" @click="changeDateOption(item)">
+                    {{item}}
+                  </div>
+                </div>
+                <div class="select-data-selection">
+                  <el-date-picker
+                    v-model="startAndEndTime"
+                    type="daterange"
+                    @change="changeChartDate"
+                    style="width: 230px"
+                    start-placeholder="起始日期"
+                    end-placeholder="结束日期"
+                    size="small"
+                    :picker-options="pickOptions"
+                    unlink-panels
+                    value-format="yyyy-MM-dd"
+                  ></el-date-picker>
+                </div>
+                <div class="select-chart-type" v-if="!isHsiIndex" style="float: left; margin-left: 44px">
+                  <div class="float-left mr-20">
+                    图表：
+                    <el-dropdown @command="changeChartType">
+                      <span class="el-dropdown-link">
+                        {{chartTypeList[currentChartType]}}
+                        <i class="el-icon-arrow-down el-icon--right"></i>
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="line" :disabled="isContrast">折线图</el-dropdown-item>
+                        <el-dropdown-item v-if="dateOptionValue != '1D'" command="candlestick" :disabled="isContrast || realtimemarket == 0">
+                          K线图
+                        </el-dropdown-item>
+                        <el-dropdown-item command="area" :disabled="isContrast">面积图</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </div>
+                  <div class="float-left mr-20" v-if="!isHsiIndex">
+                    频次：
+                    <el-dropdown @command="clickChartFrequency">
+                      <span class="el-dropdown-link">
+                        {{chartFrequencyList[chartFrequencyType]}}
+                        <i class="el-icon-arrow-down el-icon--right"></i>
+                      </span>
+                      <el-dropdown-menu slot="dropdown">
+                        <template v-if="dateOptionValue == '1D'">
+                          <el-dropdown-item command="m1">1min</el-dropdown-item>
+                          <el-dropdown-item command="m15" :disabled="indexType == 700">15min</el-dropdown-item>
+                          <el-dropdown-item command="m30" :disabled="indexType == 700">30min</el-dropdown-item>
+                          <el-dropdown-item command="m60" :disabled="indexType == 700">60min</el-dropdown-item>
+                        </template>
+                        <template v-else>
+                          <el-dropdown-item command="day" :disabled="isContrast || indexType == 700">日</el-dropdown-item>
+                          <el-dropdown-item command="week" :disabled="isContrast || indexType == 700 || freqRange === 'day'">周</el-dropdown-item>
+                          <el-dropdown-item command="month" :disabled="isContrast || indexType == 700 || freqRange === 'day' || freqRange === 'week'">
+                            月
+                          </el-dropdown-item>
+                          <!-- <el-dropdown-item command="year" :disabled="isContrast || indexSource == 0 || indexType == 700">年</el-dropdown-item> -->
+                          <!-- <el-dropdown-item command="year" :disabled="true">年</el-dropdown-item> -->
+                        </template>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </div>
+                </div>
+                <div class="select-index-more" v-if="!isHsiIndex" style="position: relative; margin-top: 0; float: left">
+                  <span class="sub-title">指数对比</span>
+                  <el-autocomplete
+                    size="small"
+                    placeholder="添加其他指数进行对比"
+                    v-model="searchVal"
+                    :fetch-suggestions="showKeyboardInfo"
+                    style="width: 280px"
+                    suffix-icon="el-icon-circle-plus-outline"
+                    @select="selectOtherIndex"
+                    @focus="showHotIndexBox = true"
+                    @blur="blurHotIndexBox"
+                  >
+                    <template slot-scope="props">
+                      <el-row :gutter="30">
+                        <el-col :span="12">{{props.item.indexCode}}</el-col>
+                        <el-col :span="12">{{props.item.shortCName}}</el-col>
+                      </el-row>
+                    </template>
+                  </el-autocomplete>
+                  <div
+                    v-show="showHotIndexBox && !searchVal"
+                    class="el-autocomplete-suggestion el-popper"
+                    style="position: fixed; top: 108px; left: 780px; transform-origin: center top 0px; z-index: 2040; width: 300px"
+                    x-placement="bottom-start"
+                  >
+                    <div class="el-scrollbar">
+                      <div class="el-autocomplete-suggestion__wrap el-scrollbar__wrap" style="margin-bottom: -14px; margin-right: -14px">
+                        <ul class="el-scrollbar__view el-autocomplete-suggestion__list" role="listbox">
+                          <li role="option" v-for="item in hotIndexList">
+                            <div class="el-row" style="margin-left: -15px; margin-right: -15px; position: relative" @click="selectOtherIndex(item)">
+                              <div class="el-col el-col-12" style="padding-left: 15px; padding-right: 15px">{{item.indexCode}}</div>
+                              <div class="el-col el-col-12" style="padding-left: 15px; padding-right: 15px">{{item.shortCName}}</div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div x-arrow="" class="popper__arrow" style="left: 35px"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="stock-chart-box">
+              <div id="chart2" class="chart1" style="width: 100%; height: 700px; margin-top: -85px" v-show="showStockChart"></div>
+              <div class="index-list-box" v-show="contrastIndexList.length > 0">
+                <div class="index-select-item">
+                  <span class="ciql-color"></span>
+                  <div class="sub-content-index">
+                    <div>{{indexName}}</div>
+                  </div>
+                </div>
+
+                <div v-for="(item,index) in contrastIndexList" class="index-select-item" @click="deleteContrastItem(index)">
+                  <span class="ciql-color" :style="{backgroundColor: colors[index + 1]}"></span>
+                  <div class="sub-content-index">
+                    <div>{{item.shortCName}}</div>
+                  </div>
+                  <div class="float-left close-btn">
+                    <i class="el-icon-close"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="indicators-select" v-show="!isHsiIndex && contrastIndexList.length == 0 && dateOptionValue != '1D' && showStockChart">
+                <el-select v-model="indicatorsValue" size="mini" @change="indicatorsChange">
+                  <el-option label="MACD" value="MACD"></el-option>
+                  <el-option label="BOLL" value="BOLL"></el-option>
+                  <el-option label="ROC" value="ROC"></el-option>
+                  <el-option label="RSI" value="RSI" :disabled="currentChartType != 'candlestick'"></el-option>
+                </el-select>
+              </div>
+
+              <div class="indicators-tip" v-show="!isHsiIndex && contrastIndexList.length == 0 && dateOptionValue != '1D' && showStockChart">
+                鼠标滚轮滑动放大
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="layer" v-show="isLoading">
+        <div class="loading">
+          <i class="loading-icon"></i>
+          <span class="loading-info">页面加载中，请稍后...</span>
+        </div>
+      </div>
+      <div class="container">
+        <!-- 主体内容 -->
+        <div class="content hidden-xs-only">
+          <div class="wrapper" style="padding: 0">
+            <div class="bread-crumb hidden-xs-only">
+              <a>首页</a>
+              -
+              <a>指数系列</a>
+              -
+              <a>{{indexName}}</a>
+            </div>
+            <!-- 左侧 -->
+            <div class="el-col el-col-xs-24 el-col-17 pd-r-10">
+              <div class="chart-box bg-white">
+                <div class="chart-box-head hidden-xs-only">
+                  <div class="stock-name">{{indexName}}{{'（'+indexCodeName+'）'}}</div>
+                  <div class="stock-detail" v-show="realtimemarket != 0 ">
+                    <div class="float-left stock-detail-count" :class="[indexChg > 0 ? 'up' : 'down']">
+                      {{indexCurrent}}
+                      <i class="iconfont" :class="[indexChg > 0 ? 'icon-shangzhang' : 'icon-xiadie']"></i>
+                    </div>
+                    <div class="float-left stock-detail-item" :class="[indexChg > 0 ? 'up' : 'down']">
+                      <span v-if="indexChg > 0">+</span>
+                      {{indexChg}}
+                    </div>
+                    <div class="float-left stock-detail-item"  :class="[indexChg > 0 ? 'up' : 'down']">
+                      <span v-if="indexChg > 0">+</span>
+                      {{indexPercent}}%
+                    </div>
+                    <div class="float-left stock-detail-item" v-if="!isHsiIndex">成交额: {{indexMoney}}元</div>
+                    <div class="float-left stock-detail-item">更新时间: {{indexTime}}</div>
+                  </div>
+                </div>
+                <div class="fix-select-box hidden-xs-only" v-show="isFix">
+                  <div class="wrapper">
+                    <el-tabs v-model="activeName" @tab-click="mainTabClick">
+                      <el-tab-pane v-for="item in tabsList" :key="item.name" :label="item.name" :name="item.id"></el-tab-pane>
+                    </el-tabs>
+                  </div>
+                </div>
+                <div class="select-box">
+                  <el-tabs v-model="activeName" @tab-click="mainTabClick">
+                    <el-tab-pane v-for="item in tabsList" :key="item.name" :label="item.name" :name="item.id"></el-tab-pane>
+                  </el-tabs>
+                  <!-- 指数表现 -->
+                  <div v-show="activeName == 0" style="position: relative">
+                    <div class="sub-select-box">
+                      <div class="overflow-hidden">
+                        <div class="select-time-selection">
+                          <div class="sub-title">日期区间</div>
+                          <div
+                            class="sub-item"
+                            :class="item == dateOptionValue ? 'active': ''"
+                            v-for="item in dateOption"
+                            @click="changeDateOption(item)"
+                          >
+                            {{item}}
+                          </div>
+                        </div>
+                        <div class="select-data-selection">
+                          <el-date-picker
+                            v-model="startAndEndTime"
+                            type="daterange"
+                            @change="changeChartDate"
+                            style="width: 230px"
+                            start-placeholder="起始日期"
+                            end-placeholder="结束日期"
+                            size="small"
+                            :picker-options="pickOptions"
+                            unlink-panels
+                            value-format="yyyy-MM-dd"
+                          ></el-date-picker>
+                        </div>
+                        <div class="select-chart-type" v-if="!isHsiIndex">
+                          <div class="float-left mr-20">
+                            图表：
+                            <el-dropdown @command="changeChartType">
+                              <span class="el-dropdown-link">
+                                {{chartTypeList[currentChartType]}}
+                                <i class="el-icon-arrow-down el-icon--right"></i>
+                              </span>
+                              <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="line" :disabled="isContrast">折线图</el-dropdown-item>
+                                <el-dropdown-item v-if="dateOptionValue != '1D'" command="candlestick" :disabled="isContrast || realtimemarket == 0">
+                                  K线图
+                                </el-dropdown-item>
+                                <el-dropdown-item command="area" :disabled="isContrast">面积图</el-dropdown-item>
+                              </el-dropdown-menu>
+                            </el-dropdown>
+                          </div>
+                          <div class="float-left" v-if="!isHsiIndex">
+                            频次：
+                            <el-dropdown @command="clickChartFrequency">
+                              <span class="el-dropdown-link">
+                                {{chartFrequencyList[chartFrequencyType]}}
+                                <i class="el-icon-arrow-down el-icon--right"></i>
+                              </span>
+                              <el-dropdown-menu slot="dropdown">
+                                <template v-if="dateOptionValue == '1D'">
+                                  <el-dropdown-item command="m1">1min</el-dropdown-item>
+                                  <el-dropdown-item command="m15" :disabled="indexType == 700">15min</el-dropdown-item>
+                                  <el-dropdown-item command="m30" :disabled="indexType == 700">30min</el-dropdown-item>
+                                  <el-dropdown-item command="m60" :disabled="indexType == 700">60min</el-dropdown-item>
+                                </template>
+                                <template v-else>
+                                  <el-dropdown-item command="day" :disabled="isContrast || indexType == 700">日</el-dropdown-item>
+                                  <el-dropdown-item command="week" :disabled="isContrast || indexType == 700 || freqRange === 'day'">
+                                    周
+                                  </el-dropdown-item>
+                                  <el-dropdown-item
+                                    command="month"
+                                    :disabled="isContrast || indexType == 700 || freqRange === 'day' || freqRange === 'week'"
+                                  >
+                                    月
+                                  </el-dropdown-item>
+                                  <!-- <el-dropdown-item command="year" :disabled="isContrast || indexSource == 0 || indexType == 700">年</el-dropdown-item> -->
+                                  <!-- <el-dropdown-item command="year" :disabled="true">年</el-dropdown-item> -->
+                                </template>
+                              </el-dropdown-menu>
+                            </el-dropdown>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="select-index-more" v-if="!isHsiIndex">
+                        <span class="sub-title">指数对比</span>
+                        <el-autocomplete
+                          size="small"
+                          placeholder="添加其他指数进行对比"
+                          v-model="searchVal"
+                          :fetch-suggestions="showKeyboardInfo"
+                          style="width: 394px"
+                          prefix-icon="el-icon-search"
+                          @select="selectOtherIndex"
+                          @focus="showHotIndexBox = true"
+                          @blur="blurHotIndexBox"
+                        >
+                          <template slot-scope="props">
+                            <el-row :gutter="30">
+                              <el-col :span="12">{{props.item.indexCode}}</el-col>
+                              <el-col :span="12">{{props.item.shortCName}}</el-col>
+                            </el-row>
+                          </template>
+                        </el-autocomplete>
+                        <div
+                          v-show="showHotIndexBox && !searchVal"
+                          class="el-autocomplete-suggestion el-popper"
+                          style="position: absolute; top: 30px; left: 60px; transform-origin: center top 0px; z-index: 99999; width: 394px"
+                          x-placement="bottom-start"
+                        >
+                          <div class="el-scrollbar">
+                            <div class="el-autocomplete-suggestion__wrap el-scrollbar__wrap" style="margin-bottom: -14px; margin-right: -14px">
+                              <ul class="el-scrollbar__view el-autocomplete-suggestion__list" role="listbox">
+                                <li role="option" v-for="item in hotIndexList">
+                                  <div
+                                    class="el-row"
+                                    style="margin-left: -15px; margin-right: -15px; position: relative"
+                                    @click="selectOtherIndex(item)"
+                                  >
+                                    <div class="el-col el-col-12" style="padding-left: 15px; padding-right: 15px">{{item.indexCode}}</div>
+                                    <div class="el-col el-col-12" style="padding-left: 15px; padding-right: 15px">{{item.shortCName}}</div>
+                                  </div>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                          <div x-arrow="" class="popper__arrow" style="left: 35px"></div>
+                        </div>
+                      </div>
+                      <a type="button" class="fullscreen-btn" style="background-image: url('/image/fullscreen-btn.jpg')" @click="clickFullScreen"></a>
+                    </div>
+
+                    <div class="stock-chart-box">
+                      <div id="chart1" class="chart1" style="width: 100%; height: 600px; margin-top: -85px" v-show="showStockChart"></div>
+                      <div
+                        style="width: 100%; height: 600px; background-image: url('/image/no-data-chart.png'); background-size: cover"
+                        v-show="!showStockChart"
+                      ></div>
+                      <div class="index-list-box" v-show="contrastIndexList.length > 0">
+                        <div class="index-select-item">
+                          <span class="ciql-color"></span>
+                          <div class="sub-content-index">
+                            <div>{{indexName}}</div>
+                          </div>
+                        </div>
+
+                        <div v-for="(item,index) in contrastIndexList" class="index-select-item" @click="deleteContrastItem(index)">
+                          <span class="ciql-color" :style="{backgroundColor: colors[index + 1]}"></span>
+                          <div class="sub-content-index">
+                            <div>{{item.shortCName}}</div>
+                          </div>
+                          <div class="float-left close-btn">
+                            <i class="el-icon-close"></i>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div
+                        class="indicators-select"
+                        v-show="!isHsiIndex && contrastIndexList.length == 0 && dateOptionValue != '1D' && showStockChart"
+                      >
+                        <el-select v-model="indicatorsValue" size="mini" @change="indicatorsChange">
+                          <el-option label="MACD" value="MACD"></el-option>
+                          <el-option label="BOLL" value="BOLL"></el-option>
+                          <el-option label="ROC" value="ROC"></el-option>
+                          <el-option label="RSI" value="RSI" :disabled="currentChartType != 'candlestick'"></el-option>
+                        </el-select>
+                      </div>
+
+                      <div class="indicators-tip" v-show="!isHsiIndex && contrastIndexList.length == 0 && dateOptionValue != '1D' && showStockChart">
+                        鼠标滚轮滑动放大
+                      </div>
+                    </div>
+
+                    <div v-if="!isHsiIndex" class="stock-table-box" style="border-bottom: 1px solid #ebeef5">
+                      <el-table class="mt-20" :data="incomeList">
+                        <el-table-column label="" style="font-size: 12px">
+                          <el-table-column :label="incomeDate" prop="indexname"></el-table-column>
+                        </el-table-column>
+                        <el-table-column label="阶段性收益" align="center" cell-style="background:#000">
+                          <el-table-column prop="perIncome1m" label="1M" align="center" width="69"></el-table-column>
+                          <el-table-column prop="perIncome3m" label="3M" align="center" width="69"></el-table-column>
+                          <el-table-column prop="perIncomeYtd" label="YTD" align="center" width="72"></el-table-column>
+                        </el-table-column>
+                        <el-table-column label="年化收益率" align="center">
+                          <el-table-column prop="annIncome1y" label="1Y" align="center" width="72"></el-table-column>
+                          <el-table-column prop="annIncome3y" label="3Y" align="center" width="70"></el-table-column>
+                          <el-table-column prop="annIncome5y" label="5Y" align="center" width="70"></el-table-column>
+                        </el-table-column>
+                        <el-table-column label="年化波动率" align="center">
+                          <el-table-column prop="annVolatility1y" label="1Y" align="center" width="80"></el-table-column>
+                          <el-table-column prop="annVolatility3y" label="3Y" align="center" width="80"></el-table-column>
+                          <el-table-column prop="annVolatility5y" label="5Y" align="center" width="80"></el-table-column>
+                        </el-table-column>
+                      </el-table>
+                    </div>
+
+                    <div style="border-bottom: 1px solid #ebeef5" v-show="indexAnalysisFlag" class="index-analysis">
+                      <el-table class="mt-20" border :data="indexAnalysis">
+                        <el-table-column label="计算日期" prop="genDate" align="center"></el-table-column>
+                        <el-table-column label="总市值*" prop="totalMarketValue" align="center">
+                          <template slot="header" slot-scope="scope">
+                            <el-tooltip content="单位为亿元" effect="light" placement="top">
+                              <span class="header-with-tooltip">总市值*</span>
+                            </el-tooltip>
+                          </template>
+                        </el-table-column>
+                        <el-table-column label="到期收益率" prop="yieldMaturity" align="center"></el-table-column>
+                        <el-table-column label="修正久期" prop="modifiedDuration" align="center"></el-table-column>
+                        <el-table-column label="凸性" prop="convexity" align="center"></el-table-column>
+                        <el-table-column label="平均剩余期限" prop="avgResidualMaturity" align="center"></el-table-column>
+                      </el-table>
+                    </div>
+
+                    <div class="echarts-box" v-show="(newIndexType != true && indexType != 107 && indexType != 207) && showEchart">
+                      <div class="el-col-12" style="position: relative">
+                        <div id="echarts1" style="height: 380px"></div>
+                        <div class="update-time-left" style="left: 162px">更新时间：{{marketDate}}</div>
+                      </div>
+                      <div class="el-col-12" style="position: relative">
+                        <div id="echarts2" style="height: 380px"></div>
+                        <div class="update-time-right" style="left: 76px">更新时间：{{tradeDate}}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 历史行情 -->
+                  <div v-show="activeName == 1">
+                    <div class="sub-select-box-md">
+                      <div class="overflow-hidden">
+                        <div class="select-time-selection">
+                          <div class="sub-title">日期区间</div>
+                          <div
+                            class="sub-item"
+                            :class="item == dateOptionHistory ? 'active': ''"
+                            v-for="item in dateOptionPro"
+                            @click="changeDateHistory(item)"
+                          >
+                            {{item}}
+                          </div>
+                        </div>
+                        <div class="select-data-selection">
+                          <el-date-picker
+                            v-model="startAndEndTimeHistory"
+                            type="daterange"
+                            @change="changeHistoryDate"
+                            style="width: 230px"
+                            size="small"
+                            :picker-options="pickOptions"
+                            unlink-panels
+                            value-format="yyyy-MM-dd"
+                          ></el-date-picker>
+                        </div>
+                        <div class="select-chart-type">
+                          <div class="float-left" v-if="!isHsiIndex">
+                            频次：
+                            <el-dropdown @command="clickHistoryFrequency">
+                              <span class="el-dropdown-link">
+                                {{chartFrequencyList[historyFrequencyType]}}
+                                <i class="el-icon-arrow-down el-icon--right"></i>
+                              </span>
+                              <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="day">日</el-dropdown-item>
+                                <el-dropdown-item command="week" :disabled="freqRange === 'day'">周</el-dropdown-item>
+                                <el-dropdown-item command="month" :disabled="freqRange === 'day' || freqRange === 'week'">月</el-dropdown-item>
+                                <!-- indexSource == 0 -->
+                                <!-- <el-dropdown-item command="year" :disabled="true">年</el-dropdown-item> -->
+                              </el-dropdown-menu>
+                            </el-dropdown>
+                          </div>
+                          <div class="download-btn">
+                            <el-button
+                              type="button"
+                              class="el-button el-button--mini"
+                              @click="historyDownload"
+                              :disabled="!historyShowData || historyShowData.length == 0"
+                            >
+                              <i class="iconfont icon-xiazai"></i>
+                              <span>下载</span>
+                            </el-button>
+                          </div>
+                        </div>
+                        <div class=""></div>
+                      </div>
+                    </div>
+                    <div class="history-table-box table-align-top big-table" v-show="realtimemarket > 0">
+                      <el-table class="mt-20" :data="historyShowData" style="width: 100%" v-loading="historyLoading">
+                        <el-table-column prop="date" label="日期" width="100"></el-table-column>
+                        <el-table-column label="开盘价" align="right" v-if="realtimemarket > 0">
+                          <template slot-scope="scope">{{scope.row.open ? scope.row.open : '-'}}</template>
+                        </el-table-column>
+                        <el-table-column label="最高价" align="right">
+                          <template slot-scope="scope">{{scope.row.high ? scope.row.high : '-'}}</template>
+                        </el-table-column>
+                        <el-table-column label="最低价" align="right">
+                          <template slot-scope="scope">{{scope.row.low ? scope.row.low : '-'}}</template>
+                        </el-table-column>
+                        <el-table-column label="收盘价" align="right">
+                          <template slot-scope="scope">{{scope.row.close ? scope.row.close : '-'}}</template>
+                        </el-table-column>
+                        <el-table-column label="涨跌幅" align="right">
+                          <template slot-scope="scope">
+                            {{ scope.row.percent ? (scope.row.percent.indexOf('-') ? '+' + scope.row.percent: scope.row.percent) : '-'}}
+                          </template>
+                        </el-table-column>
+                        <!-- 历史行情中，恒生指数不显示“成交量”和“成交额”这两个字段 -->
+                        <el-table-column prop="volume" width="100" align="right" v-if="!isHsiIndex">
+                          <template slot="header" slot-scope="props">
+                            <el-tooltip
+                              class="item"
+                              effect="dark"
+                              :content="indexType == 106 || indexType == 206?'成交量单位为亿张':'成交量单位为万手'"
+                              placement="top"
+                            >
+                              <span>{{indexType == 106 || indexType == 206?'成交量*':'成交量*'}}</span>
+                            </el-tooltip>
+                          </template>
+                        </el-table-column>
+                        <el-table-column prop="amount" width="100" align="right" v-if="!isHsiIndex">
+                          <template slot="header" slot-scope="props">
+                            <el-tooltip class="item" effect="dark" content="成交额单位为亿元" placement="top">
+                              <span>{{'成交额*'}}</span>
+                            </el-tooltip>
+                          </template>
+                        </el-table-column>
+                      </el-table>
+                      <div class="scroll-load scroll-load-1">
+                        <div class="page-info">
+                          共
+                          <span>{{historyAllDataTotal}}</span>
+                          条 已显示
+                          <span>{{historyShowData.length}}</span>
+                          条
+
+                          <i v-show="historyAllDataTotal >  historyShowData.length" class="down-icon el-icon-arrow-down"></i>
+                        </div>
+                      </div>
+                      <div class="explain" v-if="indexCodeName == 399001 || indexCodeName == 399006">
+                        注：此处展示的成交量、成交金额为指数样本数据的汇总结果。
+                      </div>
+                    </div>
+                    <div class="history-table-box-1 table-align-top big-table" v-show="realtimemarket == 0">
+                      <el-table class="mt-20" :data="historyShowData" style="width: 100%" v-loading="historyLoading" v-if="realtimemarket == 0">
+                        <el-table-column prop="date" label="日期"></el-table-column>
+                        <el-table-column label="收盘价" align="right">
+                          <template slot-scope="scope">{{scope.row.close ? scope.row.close : '-'}}</template>
+                        </el-table-column>
+                        <el-table-column label="涨跌幅" align="right">
+                          <template slot-scope="scope">
+                            {{scope.row.percent ? (scope.row.percent.indexOf('-') ? '+' + scope.row.percent: scope.row.percent) : '-'}}
+                          </template>
+                        </el-table-column>
+                        <!-- 债券指数 -->
+                        <!--<el-table-column prop="volume" label="成交量(亿张)" align="right" v-show="indexType == 106 || indexType == 206">-->
+                        <!--</el-table-column>-->
+                        <!-- 非债券指数 -->
+                        <!--<el-table-column prop="volume" label="成交量(万手)" align="right" v-show="!(indexType == 106 || indexType == 206)">-->
+
+                        <!--</el-table-column>-->
+                        <!--<el-table-column prop="amount" label="成交额(亿元)" align="right"></el-table-column>-->
+                      </el-table>
+                      <div class="scroll-load scroll-load-1">
+                        <div class="page-info">
+                          共
+                          <span>{{historyAllDataTotal}}</span>
+                          条 已显示
+                          <span>{{historyShowData.length}}</span>
+                          条
+
+                          <i v-show="historyAllDataTotal >  historyShowData.length" class="down-icon el-icon-arrow-down"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 样本详情 -->
+                <div v-show="activeName == 2 ">
+                  <div class="sub-select-box-md">
+                    <div class="overflow-hidden">
+                      <div
+                        class="select-time-selection"
+                        style="margin-right: 20px"
+                        v-if="isHsiIndex || !(newIndexType != true && (indexType != 107 || indexType != 207))"
+                      >
+                        <div class="sub-title">日期选择</div>
+                        <el-date-picker
+                          ref="myDate"
+                          size="small"
+                          v-model="currDate"
+                          type="month"
+                          placeholder="选择日期"
+                          value-format="yyyy-MM"
+                          @change="changeSampleDate"
+                        ></el-date-picker>
+                      </div>
+                      <div class="download-box">
+                        <div class="download-btn-left">
+                          <button type="button" class="el-button el-button--mini" @click="downloadSample">
+                            <i class="iconfont icon-xiazai"></i>
+                            <span>当前样本</span>
+                          </button>
+                        </div>
+                        <div class="excel-btn" v-if="!isHsiIndex && newIndexType != true">
+                          <button type="button" class="el-button el-button--mini" @click="downloadHistory">
+                            <i class="iconfont icon-excel"></i>
+                            <span>样本权重</span>
+                          </button>
+                          <button type="button" class="el-button el-button--mini" @click="downloadAdjustment">
+                            <i class="iconfont icon-excel"></i>
+                            <span>历史调样</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="history-table-box table-align-top" v-show="newIndexType == true">
+                    <el-table class="mt-20" :data="sampleList" style="width: 100%">
+                      <el-table-column prop="dateStr" label="日期"></el-table-column>
+                      <el-table-column label="深市代码" align="right">
+                        <template slot-scope="scope">{{scope.row.szseCode ? scope.row.szseCode : '--'}}</template>
+                      </el-table-column>
+                      <el-table-column label="沪市代码" align="right">
+                        <template slot-scope="scope">{{scope.row.sseCode ? scope.row.sseCode : '--'}}</template>
+                      </el-table-column>
+                      <el-table-column label="银行间代码" align="right">
+                        <template slot-scope="scope">{{scope.row.interBankCode ? scope.row.interBankCode : '--'}}</template>
+                      </el-table-column>
+                      <el-table-column prop="secname" label="样本简称" align="right"></el-table-column>
+                      <!--<el-table-column v-if="indexSource == '1'" prop="couponRate" label="票面利率" align="right"></el-table-column>-->
+                      <el-table-column prop="weight" label="权重(%)" align="right"></el-table-column>
+                    </el-table>
+                    <div class="scroll-load scroll-load-2">
+                      <div class="page-info">
+                        共
+                        <span>{{sampleTotal}}</span>
+                        条 已显示
+                        <span>{{sampleList.length}}</span>
+                        条
+                        <i v-if="sampleTotal > sampleList.length" class="down-icon el-icon-arrow-down"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="history-table-box table-align-top" v-show="newIndexType != true">
+                    <!-- 非债券指数 -->
+                    <el-table class="mt-20" :data="sampleList" style="width: 100%" v-if="newIndexType != true">
+                      <el-table-column prop="dateStr" label="日期" width="90"></el-table-column>
+                      <!-- <el-table-column prop="indexcode" label="指数代码" v-if="!isHsiIndex" align="right"></el-table-column>
+                      <el-table-column prop="indexname" label="指数简称" v-if="!isHsiIndex" align="right"></el-table-column> -->
+                      <el-table-column prop="seccode" label="样本代码" align="right"></el-table-column>
+                      <el-table-column prop="secname" label="样本简称" align="right"></el-table-column>
+                      <el-table-column prop="trade" label="所属行业" align="right" v-if="indexType != 107 && indexType != 207"></el-table-column>
+                      <!-- <el-table-column align="right" v-if="!isHsiIndex && newIndexType != true">
+                                        <template slot="header" slot-scope="props">
+                                            <el-tooltip class="item" effect="dark"
+                                                        content="总市值单位为亿元" placement="top">
+                                                <span>{{'总市值*'}}</span>
+                                            </el-tooltip>
+                                        </template>
+                                        <template slot-scope="scope">
+                                            {{scope.row.totalMarketValue ?
+                                            scope.row.totalMarketValue.toFixed(2) : '--'}}
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="weight" label="权重(%)"
+                                                     align="right"></el-table-column> -->
+                      <el-table-column prop="weight" label="权重(%)" align="right">
+                        <template slot-scope="scope">{{scope.row.weight ? scope.row.weight : '--'}}</template>
+                      </el-table-column>
+                    </el-table>
+                    <div class="scroll-load scroll-load-2">
+                      <div class="page-info">
+                        共
+                        <span>{{sampleTotal}}</span>
+                        条 已显示
+                        <span>{{sampleList.length}}</span>
+                        条
+                        <i v-if="sampleTotal > sampleList.length" class="down-icon el-icon-arrow-down"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 相关产品 -->
+                <div v-show="activeName == 3">
+                  <div class="history-table-box table-align-top big-table" style="border-top: 1px solid #d9d9d9">
+                    <el-table class="mt-20" :data="fundList" style="width: 100%" v-loading="fundLoading">
+                      <el-table-column prop="fundCode" label="基金代码" align="left">
+                        <template slot-scope="scope">
+                          <span class="table-small-item">{{scope.row.fundCode}}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="基金名称" align="left" width="120">
+                        <template slot-scope="scope">
+                          <span class="table-small-item">{{scope.row.fundName}}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="fundDate" label="成立日期" align="right" width="95">
+                        <template slot-scope="scope">
+                          <span class="table-small-item">{{scope.row.fundDate}}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="fundScale" align="right" width="90">
+                        <template slot="header" slot-scope="props">
+                          <el-tooltip class="item" effect="dark" content="净值规模单位为亿元" placement="top">
+                            <span>{{'净值规模*'}}</span>
+                          </el-tooltip>
+                        </template>
+                        <template slot-scope="scope">
+                          <span class="table-small-item">{{scope.row.fundScale ? scope.row.fundScale : '--'}}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="fundNetValue" align="right">
+                        <template slot="header" slot-scope="props">
+                          <el-tooltip class="item" effect="dark" content="单位净值单位为元" placement="top">
+                            <span>{{'单位净值*'}}</span>
+                          </el-tooltip>
+                        </template>
+                        <template slot-scope="scope">
+                          <span class="table-small-item">{{scope.row.fundNetValue ? scope.row.fundNetValue : '--'}}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="fundType" label="基金类型" align="right">
+                        <template slot-scope="scope">
+                          <span class="table-small-item">{{scope.row.fundType}}</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="foundLocation" label="上市地点" align="right" width="120">
+                        <template slot-scope="scope">
+                          <span class="table-small-item">{{scope.row.foundLocation ? scope.row.foundLocation : '--'}}</span>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                    <div class="scroll-load scroll-load-3">
+                      <div class="page-info">
+                        共
+                        <span>{{fundTotal}}</span>
+                        条 已显示
+                        <span>{{fundList.length}}</span>
+                        条
+                        <i v-show="fundTotal >  fundList.length" class="down-icon el-icon-arrow-down"></i>
+                      </div>
+                    </div>
+                    <div class="explain">注：更新时间为 {{fundUpdateTime}}，此处展示承担业绩代表性的基金代码，净值规模按照份额合并统计。</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧 -->
+            <div class="el-col el-col-xs-24 el-col-7 pd-l-10">
+              <div class="right-content bg-white right-content-no-data">
+                <div class="title-box">
+                  <div class="sub-title">指数简介</div>
+                </div>
+                <div class="sub-main-content muti-line-ellipsis" :title="indexInfo.jsjj">{{indexInfo.jsjj ? indexInfo.jsjj : '暂无数据'}}</div>
+              </div>
+
+              <div class="right-content bg-white right-content-no-data">
+                <div class="title-box">
+                  <div class="sub-title">指数编制</div>
+                </div>
+                <div class="sub-main-content">
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>选样范围：</b>
+                      {{indexInfo.xyfw}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>选样指标：</b>
+                      {{indexInfo.xygz}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>计算方式：</b>
+                      {{indexInfo.jsfs}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>权重上限：</b>
+                      {{indexInfo.qzsx ? indexInfo.qzsx*100 + '%': '无'}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>调样周期：</b>
+                      {{indexInfo.typl ? typlList[indexInfo.typl] : typlList[0]}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>基点：</b>
+                      {{indexInfo.jd}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>基日：</b>
+                      {{indexInfo.jr}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>发布日期：</b>
+                      {{indexInfo.fbrq}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="right-content bg-white">
+                <div class="title-box">
+                  <div class="sub-title">资料下载</div>
+                </div>
+                <div class="sub-main-content" v-if="indexType != 700">
+                  <a :href="docDownloadPDF ? docDownloadPDF : docDownload" target="_blank">
+                    <div class="sub-download-item">
+                      <i class="iconfont icon-pdf"></i>
+                      <span>编制方案</span>
+                    </div>
+                  </a>
+                  <!-- 指数数据来源是“外部合作指数”时不展示“彩页”按钮 -->
+                  <a v-if="dataSource !== 1" :href="colorPageDownloadPDF ? colorPageDownloadPDF : colorPageDownload" target="_blank">
+                    <div class="sub-download-item">
+                      <i class="iconfont icon-pdf"></i>
+                      <span>彩页</span>
+                    </div>
+                  </a>
+                </div>
+                <div class="sub-main-content" v-else>暂无</div>
+              </div>
+
+              <div class="right-content bg-white" v-if="newsList.length > 0">
+                <div class="title-box">
+                  <div class="sub-title">相关新闻</div>
+                </div>
+                <div class="sub-main-content">
+                  <div class="sub-news-item" v-for="item in newsList">
+                    <a :href="item.docPubUrl" target="_blank">
+                      <div class="sub-news-title" :title="item.docTitle">{{item.docTitle}}</div>
+                      <div class="sub-news-time">{{item.docPubTime | dateFormat}}</div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="right-content bg-white" v-if="indexType == 500">
+                <div class="title-box">
+                  <div class="sub-title">免责声明</div>
+                </div>
+                <div class="sub-main-content">
+                  本页指数由深圳证券信息有限公司（“深证信息”）代表中华证券交易服务有限公司（“中华公司”）计算及/或发布。深证信息、中华公司对指数及/或其相关数据的准确性、完整性、及时性及适用性不作任何明示或暗示的担保。对于任何人因使用该指数及/或其中的数据或信息而遭受的任何直接或间接的损害、损失、支出或费用，中华公司及/或深证信息亦不承担任何责任。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 移动端 -->
+        <div class="content hidden-sm-and-up">
+          <!-- 移动端导航 -->
+          <div class="hidden-sm-and-up" style="overflow: hidden">
+            <div class="wrapper" style="background-color: #fff">
+              <div>
+                <el-tabs v-model="mobileActiveName" @tab-click="mobileMainTabClick">
+                  <el-tab-pane v-for="item in mobileTabsList" :key="item.name" :label="item.name" :name="item.id"></el-tab-pane>
+                </el-tabs>
+              </div>
+            </div>
+            <!-- 概况 -->
+            <div class="el-col el-col-xs-24" v-show="mobileActiveName == 0">
+              <div class="right-content bg-white right-content-no-data">
+                <div class="title-box">
+                  <div class="sub-title">指数简介</div>
+                </div>
+                <div class="sub-main-content muti-line-ellipsis" :title="indexInfo.jsjj">{{indexInfo.jsjj ? indexInfo.jsjj : '暂无数据'}}</div>
+              </div>
+
+              <div class="right-content bg-white right-content-no-data">
+                <div class="title-box">
+                  <div class="sub-title">指数编制</div>
+                </div>
+                <div class="sub-main-content">
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>选样范围：</b>
+                      {{indexInfo.xyfw}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>选样指标：</b>
+                      {{indexInfo.xygz}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>计算方式：</b>
+                      {{indexInfo.jsfs}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>权重上限：</b>
+                      {{indexInfo.qzsx ? indexInfo.qzsx*100 + '%': '无'}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>调样周期：</b>
+                      {{indexInfo.typl ? typlList[indexInfo.typl] : typlList[0]}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>基点：</b>
+                      {{indexInfo.jd}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>基日：</b>
+                      {{indexInfo.jr}}
+                    </span>
+                  </div>
+                  <div class="sub-content-item el-row">
+                    <span class="el-col-24">
+                      <b>发布日期：</b>
+                      {{indexInfo.fbrq}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="right-content bg-white">
+                <div class="title-box">
+                  <div class="sub-title">资料下载</div>
+                </div>
+                <div class="sub-main-content">
+                  <a :href="docDownloadPDF ? docDownloadPDF : docDownload" target="_blank">
+                    <div class="sub-download-item">
+                      <i class="iconfont icon-pdf"></i>
+                      <span>编制方案</span>
+                    </div>
+                  </a>
+                  <!-- 指数数据来源是“外部合作指数”时不展示“彩页”按钮 -->
+                  <a v-if="dataSource !== 1" :href="colorPageDownloadPDF ? colorPageDownloadPDF : colorPageDownload" target="_blank">
+                    <div class="sub-download-item">
+                      <i class="iconfont icon-pdf"></i>
+                      <span>彩页</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+              <div class="right-content bg-white" v-if="newsList.length > 0">
+                <div class="title-box">
+                  <div class="sub-title">相关新闻</div>
+                </div>
+                <div class="sub-main-content">
+                  <div class="sub-news-item" v-for="item in newsList">
+                    <a :href="item.docPubUrl" target="_blank">
+                      <div class="sub-news-title" :title="item.docTitle">{{item.docTitle}}</div>
+                      <div class="sub-news-time">{{item.docPubTime | dateFormat}}</div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="right-content bg-white" v-if="indexType == 500">
+                <div class="title-box">
+                  <div class="sub-title">免责声明</div>
+                </div>
+                <div class="sub-main-content">
+                  本页指数由深圳证券信息有限公司（“深证信息”）代表中华证券交易服务有限公司（“中华公司”）计算及/或发布。深证信息、中华公司对指数及/或其相关数据的准确性、完整性、及时性及适用性不作任何明示或暗示的担保。对于任何人因使用该指数及/或其中的数据或信息而遭受的任何直接或间接的损害、损失、支出或费用，中华公司及/或深证信息亦不承担任何责任。
+                </div>
+              </div>
+            </div>
+            <!-- 表现 -->
+            <div class="el-col el-col-xs-24" v-show="mobileActiveName == 1">
+              <div class="m-chart-box wrapper bg-white">
+                <div class="stock-detail" v-show="realtimemarket != 0">
+                  <div class="el-col-13">
+                    <div class="el-col-24">
+                      <div class="float-left stock-detail-count" :class="[indexChg > 0 ? 'up' : 'down']">
+                        {{indexCurrent}}
+                        <i class="iconfont" :class="[indexChg > 0 ? 'icon-shangzhang' : 'icon-xiadie']"></i>
+                      </div>
+                    </div>
+                    <div class="el-col-24">
+                      <div class="float-left stock-detail-item" :class="[indexChg > 0 ? 'up' : 'down']">
+                        <span v-if="indexChg > 0">+</span>
+                        {{indexChg}}
+                      </div>
+                      <div class="float-left stock-detail-item"  :class="[indexChg > 0 ? 'up' : 'down']" style="margin-left: 10px">
+                        <span v-if="indexChg > 0">+</span>
+                        {{indexPercent}}%
+                      </div>
+                    </div>
+                  </div>
+                  <div class="el-col-11" v-if="!isHsiIndex">
+                    <div class="float-right stock-detail-item">成交额:</div>
+                    <div class="float-right stock-detail-item">{{indexMoney}}元</div>
+                  </div>
+                </div>
+              </div>
+              <div class="overflow-hidden wrapper bg-white" style="padding: 0 10px 10px 10px">
+                <div class="el-col el-col-xs-24 mt-10">
+                  <div class="select-chart-type el-col-xs-24">
+                    <div class="el-col-xs-8">
+                      <el-input @focus="mobileFullScreenDialog = true" placeholder="时间区间" size="mini" suffix-icon="el-icon-date"></el-input>
+                    </div>
+                    <!-- 国证恒生指数不显示图形类型和频次 -->
+                    <div class="el-col-xs-8" v-if="!isHsiIndex" style="text-align: center">
+                      <el-dropdown class="mobile-box" @command="changeChartType">
+                        <span class="el-dropdown-link">
+                          {{chartTypeList[currentChartType]}}
+                          <i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item command="line" :disabled="isContrast">折线图</el-dropdown-item>
+                          <el-dropdown-item v-if="dateOptionValue != '1D'" command="candlestick" :disabled="isContrast || realtimemarket == 0">
+                            K线图
+                          </el-dropdown-item>
+                          <el-dropdown-item command="area" :disabled="isContrast">面积图</el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </div>
+                    <div class="el-col-xs-8" v-if="!isHsiIndex">
+                      <span class="hidden-ip5">频次：</span>
+                      <el-dropdown class="mobile-box" size="mini" @command="clickChartFrequency">
+                        <span class="el-dropdown-link">
+                          {{chartFrequencyList[chartFrequencyType]}}
+                          <i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                          <template v-if="dateOptionValue == '1D'">
+                            <el-dropdown-item command="m1">1min</el-dropdown-item>
+                            <el-dropdown-item command="m15" :disabled="indexType == 700">15min</el-dropdown-item>
+                            <el-dropdown-item command="m30" :disabled="indexType == 700">30min</el-dropdown-item>
+                            <el-dropdown-item command="m60" :disabled="indexType == 700">60min</el-dropdown-item>
+                          </template>
+                          <template v-else>
+                            <el-dropdown-item command="day" :disabled="isContrast">日</el-dropdown-item>
+                            <el-dropdown-item command="week" :disabled="isContrast || indexType == 700 || freqRange === 'day'">周</el-dropdown-item>
+                            <el-dropdown-item
+                              command="month"
+                              :disabled="isContrast || indexType == 700 || freqRange === 'day' || freqRange === 'week'"
+                            >
+                              月
+                            </el-dropdown-item>
+                          </template>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="stock-chart-box wrapper bg-white">
+                <div id="mchart" class="mchart" style="width: 100%; height: 400px" v-show="showStockChart"></div>
+                <div
+                  style="width: 100%; height: 600px; background-image: url('/image/no-data-chart.png'); background-size: cover"
+                  v-show="!showStockChart"
+                ></div>
+              </div>
+              <div v-if="!isHsiIndex" class="stock-table-box bg-whitv-wrapper" style="border-bottom: 1px solid #ebeef5">
+                <el-table class="mt-20" :data="incomeList">
+                  <el-table-column label="" style="font-size: 12px">
+                    <el-table-column :label="incomeDate" prop="indexname" width="100"></el-table-column>
+                  </el-table-column>
+                  <el-table-column label="阶段性收益" align="center" cell-style="background:#000">
+                    <el-table-column prop="perIncome1m" label="1M" align="center" width="69"></el-table-column>
+                    <el-table-column prop="perIncome3m" label="3M" align="center" width="69"></el-table-column>
+                    <el-table-column prop="perIncomeYtd" label="YTD" align="center" width="72"></el-table-column>
+                  </el-table-column>
+                  <el-table-column label="年化收益率" align="center">
+                    <el-table-column prop="annIncome1y" label="1Y" align="center" width="72"></el-table-column>
+                    <el-table-column prop="annIncome3y" label="3Y" align="center" width="70"></el-table-column>
+                    <el-table-column prop="annIncome5y" label="5Y" align="center" width="70"></el-table-column>
+                  </el-table-column>
+                  <el-table-column label="年化波动率" align="center">
+                    <el-table-column prop="annVolatility1y" label="1Y" align="center" width="80"></el-table-column>
+                    <el-table-column prop="annVolatility3y" label="3Y" align="center" width="80"></el-table-column>
+                    <el-table-column prop="annVolatility5y" label="5Y" align="center" width="80"></el-table-column>
+                  </el-table-column>
+                </el-table>
+              </div>
+
+              <div style="border-bottom: 1px solid #ebeef5" class="index-analysis" v-show="indexAnalysisFlag">
+                <el-table class="mt-20" border :data="indexAnalysis">
+                  <el-table-column label="计算日期" prop="genDate" align="center"></el-table-column>
+                  <el-table-column label="总市值*" prop="totalMarketValue" align="center">
+                    <template slot="header" slot-scope="scope">
+                      <el-tooltip content="单位为亿元" effect="light" placement="top">
+                        <span class="header-with-tooltip">总市值*</span>
+                      </el-tooltip>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="到期收益率" prop="yieldMaturity" align="center"></el-table-column>
+                  <el-table-column label="修正久期" prop="modifiedDuration" align="center"></el-table-column>
+                  <el-table-column label="凸性" prop="convexity" align="center"></el-table-column>
+                  <el-table-column label="平均剩余期限" prop="avgResidualMaturity" align="center"></el-table-column>
+                </el-table>
+              </div>
+
+              <div v-show="showEchart" class="echarts-box bg-white wrapper" style="padding: 0">
+                <div class="right-content bg-white">
+                  <div class="title-box">
+                    <div class="sub-title">市场分布</div>
+                    <div class="m-right-time">{{marketDate}}</div>
+                  </div>
+                  <div class="" style="position: relative">
+                    <div id="mecharts1" style="height: 380px"></div>
+                  </div>
+                </div>
+
+                <div class="right-content bg-white">
+                  <div class="title-box">
+                    <div class="sub-title">行业分布</div>
+                    <div class="m-right-time">{{tradeDate}}</div>
+                  </div>
+                  <div class="" style="position: relative">
+                    <div id="mecharts2" style="height: 380px"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 行情 -->
+            <div v-show="mobileActiveName == 2">
+              <div class="sub-select-box-md bg-white">
+                <div class="overflow-hidden">
+                  <div>
+                    <div class="el-col-12">
+                      起：
+                      <el-input size="small" style="width: 100px" id="mIndexDateStart" v-model="startAndEndTimeHistory[0]"></el-input>
+                    </div>
+                    <div class="el-cik-12">
+                      终：
+                      <el-input size="small" style="width: 100px" id="mIndexDateEnd" v-model="startAndEndTimeHistory[1]"></el-input>
+                    </div>
+                  </div>
+
+                  <div class="select-chart-type">
+                    <div class="float-left download-btn">
+                      <el-button type="button" class="el-button el-button--mini" @click="queryIndexHistoryList">
+                        <i class="iconfont icon-index_search"></i>
+                        <span>搜索</span>
+                      </el-button>
+                    </div>
+                    <div class="float-left" v-if="!isHsiIndex">
+                      频次：
+                      <el-dropdown class="mobile-box" @command="clickHistoryFrequency">
+                        <span class="el-dropdown-link">
+                          {{chartFrequencyList[historyFrequencyType]}}
+                          <i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item command="day">日</el-dropdown-item>
+                          <el-dropdown-item command="week" :disabled="freqRange === 'day'">周</el-dropdown-item>
+                          <el-dropdown-item command="month" :disabled="freqRange === 'day' || freqRange === 'week'">月</el-dropdown-item>
+                          <!-- <el-dropdown-item command="year" :disabled="indexSource == 0">年</el-dropdown-item> -->
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </div>
+                    <div class="download-btn">
+                      <el-button
+                        type="button"
+                        class="el-button el-button--mini"
+                        @click="historyDownload"
+                        :disabled="!historyShowData || historyShowData.length == 0"
+                      >
+                        <i class="iconfont icon-xiazai"></i>
+                        <span>下载</span>
+                      </el-button>
+                    </div>
+                  </div>
+                  <div class=""></div>
+                </div>
+              </div>
+              <div class="history-table-box table-align-top big-table" v-show="realtimemarket > 0">
+                <el-table class="mt-20" :data="historyShowData" style="width: 100%" v-loading="historyLoading">
+                  <el-table-column prop="date" label="日期" width="100"></el-table-column>
+                  <el-table-column label="开盘价" align="right" v-if="realtimemarket > 0">
+                    <template slot-scope="scope">{{scope.row.open ? scope.row.open : '-'}}</template>
+                  </el-table-column>
+
+                  <el-table-column label="最高价" align="right">
+                    <template slot-scope="scope">{{scope.row.high ? scope.row.high : '-'}}</template>
+                  </el-table-column>
+                  <el-table-column label="收盘价" align="right">
+                    <template slot-scope="scope">{{scope.row.close ? scope.row.close : '-'}}</template>
+                  </el-table-column>
+                </el-table>
+                <div class="scroll-load scroll-load-1">
+                  <div class="page-info">
+                    共
+                    <span>{{historyAllDataTotal}}</span>
+                    条 已显示
+                    <span>{{historyShowData.length}}</span>
+                    条
+
+                    <i v-show="historyAllDataTotal >  historyShowData.length" class="down-icon el-icon-arrow-down"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="history-table-box-1 table-align-top big-table" v-show="realtimemarket == 0">
+                <el-table class="" :data="historyShowData" style="width: 100%" v-loading="historyLoading" v-if="realtimemarket == 0">
+                  <el-table-column prop="date" label="日期"></el-table-column>
+                  <el-table-column label="收盘价" align="right">
+                    <template slot-scope="scope">{{scope.row.close ? scope.row.close : '-'}}</template>
+                  </el-table-column>
+                  <div class="scroll-load scroll-load-1">
+                    <div class="page-info">
+                      共
+                      <span>{{historyAllDataTotal}}</span>
+                      条 已显示
+                      <span>{{historyShowData.length}}</span>
+                      条
+                    </div>
+                  </div>
+                </el-table>
+              </div>
+            </div>
+            <!-- 样本详情 -->
+            <div v-show="mobileActiveName == 3">
+              <div class="sub-select-box-md bg-white">
+                <div class="overflow-hidden">
+                  <div
+                    class="select-time-selection"
+                    style="margin-right: 20px"
+                    v-if="isHsiIndex || !(newIndexType != true && (indexType != 107 || indexType != 207))"
+                  >
+                    <el-date-picker
+                      size="small"
+                      style="width: 120px"
+                      v-model="currDate"
+                      type="month"
+                      placeholder="选择日期"
+                      value-format="yyyy-MM"
+                      @change="changeSampleDate"
+                    ></el-date-picker>
+                  </div>
+                  <div class="download-box">
+                    <div class="download-btn-left">
+                      <button type="button" class="el-button el-button--mini" @click="downloadSample">
+                        <i class="iconfont icon-xiazai"></i>
+                        <span>当前样本</span>
+                      </button>
+                    </div>
+                    <div class="excel-btn" v-if="!isHsiIndex && newIndexType != true">
+                      <button type="button" class="el-button el-button--mini" @click="downloadHistory">
+                        <i class="iconfont icon-excel"></i>
+                        <span>样本权重</span>
+                      </button>
+                      <button type="button" class="el-button el-button--mini" @click="downloadAdjustment">
+                        <i class="iconfont icon-excel"></i>
+                        <span>历史调样</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="history-table-box table-align-top" v-show="newIndexType == true">
+                  <!-- 新版债券指数 -->
+                  <el-table class="mt-20" :data="sampleList" style="width: 100%">
+                    <el-table-column prop="dateStr" label="日期"></el-table-column>
+                    <el-table-column label="深市代码" align="right">
+                      <template slot-scope="scope">{{scope.row.szseCode ? scope.row.szseCode : '--'}}</template>
+                    </el-table-column>
+                    <el-table-column label="沪市代码" align="right">
+                      <template slot-scope="scope">{{scope.row.sseCode ? scope.row.sseCode : '--'}}</template>
+                    </el-table-column>
+                    <el-table-column label="银行间代码" align="right">
+                      <template slot-scope="scope">{{scope.row.interBankCode ? scope.row.interBankCode : '--'}}</template>
+                    </el-table-column>
+                    <el-table-column prop="secname" label="样本简称" align="right"></el-table-column>
+                    <el-table-column prop="weight" label="权重(%)" align="right"></el-table-column>
+                  </el-table>
+                  <div class="scroll-load scroll-load-2">
+                    <div class="page-info">
+                      共
+                      <span>{{sampleTotal}}</span>
+                      条 已显示
+                      <span>{{sampleList.length}}</span>
+                      条
+                      <i v-if="sampleTotal > sampleList.length" class="down-icon el-icon-arrow-down"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="history-table-box table-align-top" v-show="newIndexType != true">
+                  <!-- 非债券指数 -->
+                  <el-table class="mt-20" :data="sampleList" style="width: 100%" v-if="newIndexType != true">
+                    <el-table-column prop="dateStr" label="日期" width="90"></el-table-column>
+                    <!-- <el-table-column prop="indexcode" label="指数代码" v-if="!isHsiIndex" align="right"></el-table-column>
+                    <el-table-column prop="indexname" label="指数简称" v-if="!isHsiIndex" align="right"></el-table-column> -->
+                    <el-table-column prop="seccode" label="样本代码" width="90" align="right"></el-table-column>
+                    <el-table-column prop="secname" label="样本简称" width="120" align="right"></el-table-column>
+                    <el-table-column
+                      prop="trade"
+                      label="所属行业"
+                      width="120"
+                      align="right"
+                      v-if="indexType != 107 && indexType != 207"
+                    ></el-table-column>
+                    <!-- <el-table-column align="right" v-if="!isHsiIndex && newIndexType != true">
+                                    <template slot="header" slot-scope="props">
+                                        <el-tooltip class="item" effect="dark" content="总市值单位为亿元" placement="top">
+                                            <span>{{'总市值*'}}</span>
+                                        </el-tooltip>
+                                    </template>
+                                    <template slot-scope="scope">
+                                        {{scope.row.totalMarketValue ? scope.row.totalMarketValue.toFixed(2) : '--'}}
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="weight" label="权重(%)" align="right"></el-table-column> -->
+                    <el-table-column prop="weight" label="权重(%)" align="right">
+                      <template slot-scope="scope">{{scope.row.weight ? scope.row.weight : '--'}}</template>
+                    </el-table-column>
+                  </el-table>
+                  <div class="scroll-load scroll-load-2">
+                    <div class="page-info">
+                      共
+                      <span>{{sampleTotal}}</span>
+                      条 已显示
+                      <span>{{sampleList.length}}</span>
+                      条
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 产品 -->
+            <div v-show="mobileActiveName == 4">
+              <div class="history-table-box table-align-top big-table" style="border-top: 1px solid #d9d9d9; background-color: #fff">
+                <el-table class="mt-20" :data="fundList" style="width: 100%" v-loading="fundLoading">
+                  <el-table-column prop="fundCode" label="基金代码" align="left">
+                    <template slot-scope="scope">
+                      <span class="table-small-item">{{scope.row.fundCode}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="基金名称" align="left" width="120">
+                    <template slot-scope="scope">
+                      <span class="table-small-item">{{scope.row.fundName}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="fundDate" label="成立日期" align="right" width="95">
+                    <template slot-scope="scope">
+                      <span class="table-small-item">{{scope.row.fundDate}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="fundScale" align="right" width="90">
+                    <template slot="header" slot-scope="props">
+                      <el-tooltip class="item" effect="dark" content="净值规模单位为亿元" placement="top">
+                        <span>{{'净值规模*'}}</span>
+                      </el-tooltip>
+                    </template>
+                    <template slot-scope="scope">
+                      <span class="table-small-item">{{scope.row.fundScale ? scope.row.fundScale : '--'}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="fundNetValue" align="right">
+                    <template slot="header" slot-scope="props">
+                      <el-tooltip class="item" effect="dark" content="单位净值单位为元" placement="top">
+                        <span>{{'单位净值*'}}</span>
+                      </el-tooltip>
+                    </template>
+                    <template slot-scope="scope">
+                      <span class="table-small-item">{{scope.row.fundNetValue ? scope.row.fundNetValue : '--'}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="fundType" label="基金类型" align="right">
+                    <template slot-scope="scope">
+                      <span class="table-small-item">{{scope.row.fundType}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="foundLocation" label="上市地点" align="right" width="120">
+                    <template slot-scope="scope">
+                      <span class="table-small-item">{{scope.row.foundLocation ? scope.row.foundLocation : '--'}}</span>
+                    </template>
+                  </el-table-column>
+                  <!--<el-table-column prop="fundManger" label="基金管理人" align="right">-->
+                  <!--<template slot-scope="scope">-->
+                  <!--<span class="table-small-item">{{scope.row.fundManger}}</span>-->
+                  <!--</template>-->
+                  <!--</el-table-column>-->
+                </el-table>
+                <div class="scroll-load scroll-load-3">
+                  <div class="page-info" @click="">
+                    共
+                    <span>{{fundTotal}}</span>
+                    条 已显示
+                    <span>{{fundList.length}}</span>
+                    条
+                  </div>
+                </div>
+                <div class="explain">注：更新时间为 {{fundUpdateTime}}，此处展示承担业绩代表性的基金代码，净值规模按照份额合并统计。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

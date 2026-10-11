@@ -1,0 +1,15 @@
+.DS_Store
+node_modules/
+.netlify/
+.env
+.env.*
+!.env.example
+__pycache__/
+.plot-cache/
+public/
+data/*-qa.png
+data/*-validation.json
+!data/account-validation.json
+data/界面导出_*.csv
+*.inspect.ndjson
+*.log

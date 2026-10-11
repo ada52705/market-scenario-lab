@@ -1,0 +1,9 @@
+{
+  "asof": "2026-10-11",
+  "last_trading_date": "2026-10-09",
+  "complete_month_end": "2026-09",
+  "indices": 10,
+  "daily_rows": 52804,
+  "initial_source": "本会话已核验的公开指数行情快照",
+  "updates": "手动抓取与核验；网站构建不会自动刷新市场数据"
+}

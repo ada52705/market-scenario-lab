@@ -1,0 +1,12 @@
+{
+  "name": "market-scenario-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "多指数市场情景研究与长期策略账户回测工作台",
+  "type": "module",
+  "scripts": {
+    "test:events": "node scripts/verify_multi_ui.mjs",
+    "test:account": "node scripts/verify_account_ui.mjs"
+  },
+  "devDependencies": { "playwright": "1.62.1" }
+}

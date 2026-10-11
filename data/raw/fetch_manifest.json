@@ -1,0 +1,804 @@
+[
+  {
+    "id": "sh000001",
+    "source": "tencent",
+    "file": "sh000001_tencent_1990.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000001,day,1990-01-01,1994-12-31,2000,qfq",
+    "rows": 855,
+    "first": "1990-12-19",
+    "last": "1994-12-30"
+  },
+  {
+    "id": "sh000001",
+    "source": "tencent",
+    "file": "sh000001_tencent_1995.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000001,day,1995-01-01,1999-12-31,2000,qfq",
+    "rows": 1226,
+    "first": "1995-01-03",
+    "last": "1999-12-30"
+  },
+  {
+    "id": "sh000001",
+    "source": "tencent",
+    "file": "sh000001_tencent_2000.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000001,day,2000-01-01,2004-12-31,2000,qfq",
+    "rows": 1200,
+    "first": "2000-01-04",
+    "last": "2004-12-31"
+  },
+  {
+    "id": "sh000001",
+    "source": "tencent",
+    "file": "sh000001_tencent_2005.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000001,day,2005-01-01,2009-12-31,2000,qfq",
+    "rows": 1215,
+    "first": "2005-01-04",
+    "last": "2009-12-31"
+  },
+  {
+    "id": "sh000001",
+    "source": "tencent",
+    "file": "sh000001_tencent_2010.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000001,day,2010-01-01,2014-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2010-01-04",
+    "last": "2014-12-31"
+  },
+  {
+    "id": "sh000001",
+    "source": "tencent",
+    "file": "sh000001_tencent_2015.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000001,day,2015-01-01,2019-12-31,2000,qfq",
+    "rows": 1219,
+    "first": "2015-01-05",
+    "last": "2019-12-31"
+  },
+  {
+    "id": "sh000001",
+    "source": "tencent",
+    "file": "sh000001_tencent_2020.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000001,day,2020-01-01,2024-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2020-01-02",
+    "last": "2024-12-31"
+  },
+  {
+    "id": "sh000001",
+    "source": "tencent",
+    "file": "sh000001_tencent_2025.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000001,day,2025-01-01,2026-12-31,2000,qfq",
+    "rows": 426,
+    "first": "2025-01-02",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh000300",
+    "source": "tencent",
+    "file": "sh000300_tencent_1990.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000300,day,1990-01-01,1994-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000300",
+    "source": "tencent",
+    "file": "sh000300_tencent_1995.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000300,day,1995-01-01,1999-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000300",
+    "source": "tencent",
+    "file": "sh000300_tencent_2000.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000300,day,2000-01-01,2004-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000300",
+    "source": "tencent",
+    "file": "sh000300_tencent_2005.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000300,day,2005-01-01,2009-12-31,2000,qfq",
+    "rows": 1154,
+    "first": "2005-04-08",
+    "last": "2009-12-31"
+  },
+  {
+    "id": "sh000300",
+    "source": "tencent",
+    "file": "sh000300_tencent_2010.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000300,day,2010-01-01,2014-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2010-01-04",
+    "last": "2014-12-31"
+  },
+  {
+    "id": "sh000300",
+    "source": "tencent",
+    "file": "sh000300_tencent_2015.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000300,day,2015-01-01,2019-12-31,2000,qfq",
+    "rows": 1219,
+    "first": "2015-01-05",
+    "last": "2019-12-31"
+  },
+  {
+    "id": "sh000300",
+    "source": "tencent",
+    "file": "sh000300_tencent_2020.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000300,day,2020-01-01,2024-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2020-01-02",
+    "last": "2024-12-31"
+  },
+  {
+    "id": "sh000300",
+    "source": "tencent",
+    "file": "sh000300_tencent_2025.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000300,day,2025-01-01,2026-12-31,2000,qfq",
+    "rows": 426,
+    "first": "2025-01-02",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh000905",
+    "source": "tencent",
+    "file": "sh000905_tencent_1990.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000905,day,1990-01-01,1994-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000905",
+    "source": "tencent",
+    "file": "sh000905_tencent_1995.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000905,day,1995-01-01,1999-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000905",
+    "source": "tencent",
+    "file": "sh000905_tencent_2000.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000905,day,2000-01-01,2004-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000905",
+    "source": "tencent",
+    "file": "sh000905_tencent_2005.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000905,day,2005-01-01,2009-12-31,2000,qfq",
+    "rows": 725,
+    "first": "2007-01-15",
+    "last": "2009-12-31"
+  },
+  {
+    "id": "sh000905",
+    "source": "tencent",
+    "file": "sh000905_tencent_2010.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000905,day,2010-01-01,2014-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2010-01-04",
+    "last": "2014-12-31"
+  },
+  {
+    "id": "sh000905",
+    "source": "tencent",
+    "file": "sh000905_tencent_2015.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000905,day,2015-01-01,2019-12-31,2000,qfq",
+    "rows": 1219,
+    "first": "2015-01-05",
+    "last": "2019-12-31"
+  },
+  {
+    "id": "sh000905",
+    "source": "tencent",
+    "file": "sh000905_tencent_2020.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000905,day,2020-01-01,2024-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2020-01-02",
+    "last": "2024-12-31"
+  },
+  {
+    "id": "sh000905",
+    "source": "tencent",
+    "file": "sh000905_tencent_2025.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000905,day,2025-01-01,2026-12-31,2000,qfq",
+    "rows": 426,
+    "first": "2025-01-02",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh000852",
+    "source": "tencent",
+    "file": "sh000852_tencent_1990.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000852,day,1990-01-01,1994-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000852",
+    "source": "tencent",
+    "file": "sh000852_tencent_1995.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000852,day,1995-01-01,1999-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000852",
+    "source": "tencent",
+    "file": "sh000852_tencent_2000.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000852,day,2000-01-01,2004-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000852",
+    "source": "tencent",
+    "file": "sh000852_tencent_2005.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000852,day,2005-01-01,2009-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000852",
+    "source": "tencent",
+    "file": "sh000852_tencent_2010.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000852,day,2010-01-01,2014-12-31,2000,qfq",
+    "rows": 54,
+    "first": "2014-10-17",
+    "last": "2014-12-31"
+  },
+  {
+    "id": "sh000852",
+    "source": "tencent",
+    "file": "sh000852_tencent_2015.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000852,day,2015-01-01,2019-12-31,2000,qfq",
+    "rows": 1219,
+    "first": "2015-01-05",
+    "last": "2019-12-31"
+  },
+  {
+    "id": "sh000852",
+    "source": "tencent",
+    "file": "sh000852_tencent_2020.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000852,day,2020-01-01,2024-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2020-01-02",
+    "last": "2024-12-31"
+  },
+  {
+    "id": "sh000852",
+    "source": "tencent",
+    "file": "sh000852_tencent_2025.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000852,day,2025-01-01,2026-12-31,2000,qfq",
+    "rows": 426,
+    "first": "2025-01-02",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh932000",
+    "source": "tencent",
+    "file": "sh932000_tencent_1990.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh932000,day,1990-01-01,1994-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh932000",
+    "source": "tencent",
+    "file": "sh932000_tencent_1995.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh932000,day,1995-01-01,1999-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh932000",
+    "source": "tencent",
+    "file": "sh932000_tencent_2000.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh932000,day,2000-01-01,2004-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh932000",
+    "source": "tencent",
+    "file": "sh932000_tencent_2005.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh932000,day,2005-01-01,2009-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh932000",
+    "source": "tencent",
+    "file": "sh932000_tencent_2010.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh932000,day,2010-01-01,2014-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh932000",
+    "source": "tencent",
+    "file": "sh932000_tencent_2015.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh932000,day,2015-01-01,2019-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh932000",
+    "source": "tencent",
+    "file": "sh932000_tencent_2020.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh932000,day,2020-01-01,2024-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh932000",
+    "source": "tencent",
+    "file": "sh932000_tencent_2025.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh932000,day,2025-01-01,2026-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000016",
+    "source": "tencent",
+    "file": "sh000016_tencent_1990.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000016,day,1990-01-01,1994-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000016",
+    "source": "tencent",
+    "file": "sh000016_tencent_1995.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000016,day,1995-01-01,1999-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000016",
+    "source": "tencent",
+    "file": "sh000016_tencent_2000.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000016,day,2000-01-01,2004-12-31,2000,qfq",
+    "rows": 243,
+    "first": "2004-01-02",
+    "last": "2004-12-31"
+  },
+  {
+    "id": "sh000016",
+    "source": "tencent",
+    "file": "sh000016_tencent_2005.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000016,day,2005-01-01,2009-12-31,2000,qfq",
+    "rows": 1215,
+    "first": "2005-01-04",
+    "last": "2009-12-31"
+  },
+  {
+    "id": "sh000016",
+    "source": "tencent",
+    "file": "sh000016_tencent_2010.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000016,day,2010-01-01,2014-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2010-01-04",
+    "last": "2014-12-31"
+  },
+  {
+    "id": "sh000016",
+    "source": "tencent",
+    "file": "sh000016_tencent_2015.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000016,day,2015-01-01,2019-12-31,2000,qfq",
+    "rows": 1219,
+    "first": "2015-01-05",
+    "last": "2019-12-31"
+  },
+  {
+    "id": "sh000016",
+    "source": "tencent",
+    "file": "sh000016_tencent_2020.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000016,day,2020-01-01,2024-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2020-01-02",
+    "last": "2024-12-31"
+  },
+  {
+    "id": "sh000016",
+    "source": "tencent",
+    "file": "sh000016_tencent_2025.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000016,day,2025-01-01,2026-12-31,2000,qfq",
+    "rows": 426,
+    "first": "2025-01-02",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sz399001",
+    "source": "tencent",
+    "file": "sz399001_tencent_1990.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399001,day,1990-01-01,1994-12-31,2000,qfq",
+    "rows": 503,
+    "first": "1993-01-03",
+    "last": "1994-12-30"
+  },
+  {
+    "id": "sz399001",
+    "source": "tencent",
+    "file": "sz399001_tencent_1995.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399001,day,1995-01-01,1999-12-31,2000,qfq",
+    "rows": 1219,
+    "first": "1995-01-03",
+    "last": "1999-12-30"
+  },
+  {
+    "id": "sz399001",
+    "source": "tencent",
+    "file": "sz399001_tencent_2000.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399001,day,2000-01-01,2004-12-31,2000,qfq",
+    "rows": 1200,
+    "first": "2000-01-04",
+    "last": "2004-12-31"
+  },
+  {
+    "id": "sz399001",
+    "source": "tencent",
+    "file": "sz399001_tencent_2005.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399001,day,2005-01-01,2009-12-31,2000,qfq",
+    "rows": 1215,
+    "first": "2005-01-04",
+    "last": "2009-12-31"
+  },
+  {
+    "id": "sz399001",
+    "source": "tencent",
+    "file": "sz399001_tencent_2010.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399001,day,2010-01-01,2014-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2010-01-04",
+    "last": "2014-12-31"
+  },
+  {
+    "id": "sz399001",
+    "source": "tencent",
+    "file": "sz399001_tencent_2015.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399001,day,2015-01-01,2019-12-31,2000,qfq",
+    "rows": 1219,
+    "first": "2015-01-05",
+    "last": "2019-12-31"
+  },
+  {
+    "id": "sz399001",
+    "source": "tencent",
+    "file": "sz399001_tencent_2020.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399001,day,2020-01-01,2024-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2020-01-02",
+    "last": "2024-12-31"
+  },
+  {
+    "id": "sz399001",
+    "source": "tencent",
+    "file": "sz399001_tencent_2025.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399001,day,2025-01-01,2026-12-31,2000,qfq",
+    "rows": 426,
+    "first": "2025-01-02",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sz399006",
+    "source": "tencent",
+    "file": "sz399006_tencent_1990.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399006,day,1990-01-01,1994-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sz399006",
+    "source": "tencent",
+    "file": "sz399006_tencent_1995.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399006,day,1995-01-01,1999-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sz399006",
+    "source": "tencent",
+    "file": "sz399006_tencent_2000.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399006,day,2000-01-01,2004-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sz399006",
+    "source": "tencent",
+    "file": "sz399006_tencent_2005.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399006,day,2005-01-01,2009-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sz399006",
+    "source": "tencent",
+    "file": "sz399006_tencent_2010.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399006,day,2010-01-01,2014-12-31,2000,qfq",
+    "rows": 1112,
+    "first": "2010-06-02",
+    "last": "2014-12-31"
+  },
+  {
+    "id": "sz399006",
+    "source": "tencent",
+    "file": "sz399006_tencent_2015.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399006,day,2015-01-01,2019-12-31,2000,qfq",
+    "rows": 1219,
+    "first": "2015-01-05",
+    "last": "2019-12-31"
+  },
+  {
+    "id": "sz399006",
+    "source": "tencent",
+    "file": "sz399006_tencent_2020.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399006,day,2020-01-01,2024-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2020-01-02",
+    "last": "2024-12-31"
+  },
+  {
+    "id": "sz399006",
+    "source": "tencent",
+    "file": "sz399006_tencent_2025.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sz399006,day,2025-01-01,2026-12-31,2000,qfq",
+    "rows": 426,
+    "first": "2025-01-02",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh000922",
+    "source": "tencent",
+    "file": "sh000922_tencent_1990.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000922,day,1990-01-01,1994-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000922",
+    "source": "tencent",
+    "file": "sh000922_tencent_1995.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000922,day,1995-01-01,1999-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000922",
+    "source": "tencent",
+    "file": "sh000922_tencent_2000.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000922,day,2000-01-01,2004-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000922",
+    "source": "tencent",
+    "file": "sh000922_tencent_2005.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000922,day,2005-01-01,2009-12-31,2000,qfq",
+    "rows": 348,
+    "first": "2008-07-31",
+    "last": "2009-12-31"
+  },
+  {
+    "id": "sh000922",
+    "source": "tencent",
+    "file": "sh000922_tencent_2010.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000922,day,2010-01-01,2014-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2010-01-04",
+    "last": "2014-12-31"
+  },
+  {
+    "id": "sh000922",
+    "source": "tencent",
+    "file": "sh000922_tencent_2015.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000922,day,2015-01-01,2019-12-31,2000,qfq",
+    "rows": 1219,
+    "first": "2015-01-05",
+    "last": "2019-12-31"
+  },
+  {
+    "id": "sh000922",
+    "source": "tencent",
+    "file": "sh000922_tencent_2020.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000922,day,2020-01-01,2024-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2020-01-02",
+    "last": "2024-12-31"
+  },
+  {
+    "id": "sh000922",
+    "source": "tencent",
+    "file": "sh000922_tencent_2025.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000922,day,2025-01-01,2026-12-31,2000,qfq",
+    "rows": 426,
+    "first": "2025-01-02",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh000688",
+    "source": "tencent",
+    "file": "sh000688_tencent_1990.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000688,day,1990-01-01,1994-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000688",
+    "source": "tencent",
+    "file": "sh000688_tencent_1995.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000688,day,1995-01-01,1999-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000688",
+    "source": "tencent",
+    "file": "sh000688_tencent_2000.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000688,day,2000-01-01,2004-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000688",
+    "source": "tencent",
+    "file": "sh000688_tencent_2005.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000688,day,2005-01-01,2009-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000688",
+    "source": "tencent",
+    "file": "sh000688_tencent_2010.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000688,day,2010-01-01,2014-12-31,2000,qfq",
+    "rows": 0,
+    "first": null,
+    "last": null
+  },
+  {
+    "id": "sh000688",
+    "source": "tencent",
+    "file": "sh000688_tencent_2015.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000688,day,2015-01-01,2019-12-31,2000,qfq",
+    "rows": 1,
+    "first": "2019-12-31",
+    "last": "2019-12-31"
+  },
+  {
+    "id": "sh000688",
+    "source": "tencent",
+    "file": "sh000688_tencent_2020.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000688,day,2020-01-01,2024-12-31,2000,qfq",
+    "rows": 1212,
+    "first": "2020-01-02",
+    "last": "2024-12-31"
+  },
+  {
+    "id": "sh000688",
+    "source": "tencent",
+    "file": "sh000688_tencent_2025.json",
+    "url": "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=sh000688,day,2025-01-01,2026-12-31,2000,qfq",
+    "rows": 426,
+    "first": "2025-01-02",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh000001",
+    "source": "sohu",
+    "file": "sh000001_sohu.json",
+    "url": "https://q.stock.sohu.com/hisHq?code=zs_000001&start=19900101&end=20261011&stat=1&order=A&period=d&rt=json",
+    "error": "HTTP Error 503: Service Temporarily Unavailable"
+  },
+  {
+    "id": "sh000300",
+    "source": "sohu",
+    "file": "sh000300_sohu.json",
+    "url": "https://q.stock.sohu.com/hisHq?code=zs_000300&start=19900101&end=20261011&stat=1&order=A&period=d&rt=json",
+    "rows": 5280,
+    "first": "2005-01-04",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh000905",
+    "source": "sohu",
+    "file": "sh000905_sohu.json",
+    "url": "https://q.stock.sohu.com/hisHq?code=zs_000905&start=19900101&end=20261011&stat=1&order=A&period=d&rt=json",
+    "rows": 3337,
+    "first": "2012-12-31",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh000852",
+    "source": "sohu",
+    "file": "sh000852_sohu.json",
+    "url": "https://q.stock.sohu.com/hisHq?code=zs_000852&start=19900101&end=20261011&stat=1&order=A&period=d&rt=json",
+    "rows": 798,
+    "first": "2023-06-21",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh932000",
+    "source": "sohu",
+    "file": "sh932000_sohu.json",
+    "url": "https://q.stock.sohu.com/hisHq?code=zs_932000&start=19900101&end=20261011&stat=1&order=A&period=d&rt=json",
+    "error": "HTTP Error 503: Service Temporarily Unavailable"
+  },
+  {
+    "id": "sh000016",
+    "source": "sohu",
+    "file": "sh000016_sohu.json",
+    "url": "https://q.stock.sohu.com/hisHq?code=zs_000016&start=19900101&end=20261011&stat=1&order=A&period=d&rt=json",
+    "error": "HTTP Error 503: Service Temporarily Unavailable"
+  },
+  {
+    "id": "sz399001",
+    "source": "sohu",
+    "file": "sz399001_sohu.json",
+    "url": "https://q.stock.sohu.com/hisHq?code=zs_399001&start=19900101&end=20261011&stat=1&order=A&period=d&rt=json",
+    "rows": 8689,
+    "first": "1991-04-04",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sz399006",
+    "source": "sohu",
+    "file": "sz399006_sohu.json",
+    "url": "https://q.stock.sohu.com/hisHq?code=zs_399006&start=19900101&end=20261011&stat=1&order=A&period=d&rt=json",
+    "rows": 3967,
+    "first": "2010-06-01",
+    "last": "2026-10-09"
+  },
+  {
+    "id": "sh000922",
+    "source": "sohu",
+    "file": "sh000922_sohu.json",
+    "url": "https://q.stock.sohu.com/hisHq?code=zs_000922&start=19900101&end=20261011&stat=1&order=A&period=d&rt=json",
+    "rows": 1477,
+    "first": "2012-12-31",
+    "last": "2019-01-30"
+  },
+  {
+    "id": "sh000688",
+    "source": "sohu",
+    "file": "sh000688_sohu.json",
+    "url": "https://q.stock.sohu.com/hisHq?code=zs_000688&start=19900101&end=20261011&stat=1&order=A&period=d&rt=json",
+    "error": "HTTP Error 503: Service Temporarily Unavailable"
+  }
+]
