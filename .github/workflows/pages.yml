@@ -22,6 +22,10 @@ jobs:
         run: python scripts/test_account.py
       - name: 核对320组账户参考结果
         run: python scripts/check_snapshot.py
+      - name: 检查滚动窗口边界与执行规则
+        run: python scripts/test_rolling.py
+      - name: 核对1600组滚动窗口参考结果
+        run: python scripts/backtest_rolling.py
       - name: 生成网站
         run: python scripts/build_site.py
       - uses: actions/configure-pages@v5

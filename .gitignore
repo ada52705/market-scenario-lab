@@ -10,6 +10,7 @@ public/
 data/*-qa.png
 data/*-validation.json
 !data/account-validation.json
+!data/rolling-validation.json
 data/界面导出_*.csv
 *.inspect.ndjson
 *.log
