@@ -8,6 +8,7 @@ __pycache__/
 .plot-cache/
 public/
 data/*-qa.png
+data/*-qa.csv
 data/*-validation.json
 !data/account-validation.json
 !data/rolling-validation.json
