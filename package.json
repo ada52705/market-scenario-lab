@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test:events": "node scripts/verify_multi_ui.mjs",
-    "test:account": "node scripts/verify_account_ui.mjs"
+    "test:account": "node scripts/verify_account_ui.mjs",
+    "test:month-picker": "node scripts/verify_month_picker.mjs"
   },
   "devDependencies": { "playwright": "1.62.1" }
 }
