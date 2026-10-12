@@ -59,6 +59,7 @@ def events(asset, window=25, threshold=20, basis='published', start='1991-01', h
             'exit_date': None, 'exit_open': None, 'status': '待买入', 'return': None,
             'holding_calendar_days': None, 'holding_trading_days': 0,
             'max_drawdown': None, 'worst_intraday_return': None,
+            'valuation_date': None, 'valuation_close': None, 'unrealized_return': None,
         }
         if index + 1 < len(rows):
             entry = rows[index + 1]
@@ -79,6 +80,9 @@ def events(asset, window=25, threshold=20, basis='published', start='1991-01', h
                 exit_date=exit_row['date'] if exit_row else None,
                 exit_open=exit_row['open'] if exit_row else None,
                 status='已完成' if exit_row else '观察中',
+                valuation_date=None if exit_row else rows[-1]['date'],
+                valuation_close=None if exit_row else rows[-1]['close'],
+                unrealized_return=None if exit_row else rows[-1]['close'] / entry['open'] - 1,
                 holding_calendar_days=(dt.date.fromisoformat(exit_row['date']) - dt.date.fromisoformat(entry['date'])).days if exit_row else None,
                 holding_trading_days=len(held), max_drawdown=drawdown,
                 worst_intraday_return=min(lows) / entry['open'] - 1 if lows and len(lows) == len(held) else None,
@@ -92,7 +96,7 @@ def run(asset, window=25, threshold=20, basis='published', start='1991-01', cost
     rows = scope_rows(asset, basis, start)
     signals = events(asset, window, threshold, basis, start, holding_months) if signals is None else signals
     if not rows:
-        return {'summary': None, 'daily': [], 'points': [], 'trades': [], 'ignored': []}
+        return {'summary': None, 'daily': [], 'points': [], 'trades': [], 'ignored': [], 'valuation': None}
     # Adapt the new signal calendar to the established single-capital execution engine.
     adapted = [{**event, 'month': event['signal_date'], 'monthly_return': event['signal_return']}
                for event in signals if event['entry_date']]
@@ -112,6 +116,25 @@ def run(asset, window=25, threshold=20, basis='published', start='1991-01', cost
     for ignored in account['ignored']:
         ignored['signal_date'] = ignored['signal_month']
         ignored['signal_month'] = ignored['signal_date'][:7]
+    # Open trades are marked after the path calculation, without a hypothetical exit fee.
+    latest_nav = account['daily'][-1]['nav']
+    position = None
+    for trade in account['trades']:
+        trade.update(valuation_date=None, valuation_close=None, nav_at_valuation=None,
+                     unrealized_return=None, unrealized_pnl=None)
+        if trade['status'] == '持仓中':
+            position = trade
+            trade.update(valuation_date=rows[-1]['date'], valuation_close=rows[-1]['close'],
+                         nav_at_valuation=latest_nav,
+                         unrealized_return=latest_nav / trade['nav_before_entry'] - 1,
+                         unrealized_pnl=(latest_nav - trade['nav_before_entry']) * capital)
+    account['valuation'] = {
+        'asof': rows[-1]['date'],
+        'realized_pnl': sum((trade['nav_after_exit'] - trade['nav_before_entry']) * capital
+                            for trade in account['trades'] if trade['status'] == '已平仓'),
+        'unrealized_pnl': position['unrealized_pnl'] if position else 0,
+        'position': position,
+    }
     return account
 
 

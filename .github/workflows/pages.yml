@@ -28,6 +28,8 @@ jobs:
         run: python scripts/backtest_rolling.py
       - name: 检查四档日历持有期与原始数据不变
         run: python scripts/test_holding.py
+      - name: 检查持仓浮动估值与整体盈亏拆分
+        run: python scripts/test_unrealized.py
       - name: 生成网站
         run: python scripts/build_site.py
       - uses: actions/configure-pages@v5

@@ -32,7 +32,7 @@ function holdingEvent(event,rows,entryIndex){
  const exit=rows[left],held=rows.slice(entryIndex,left);let high=entry.open,drawdown=0;
  for(const value of [entry.open,...held.map(row=>row.close),...(exit?[exit.open]:[])]){high=Math.max(high,value);drawdown=Math.min(drawdown,value/high-1)}
  const lows=held.filter(row=>row.low!=null);
- return {...event,entry_date:entry.date,entry_open:entry.open,target_exit_date:target,exit_date:exit?.date||null,exit_open:exit?.open??null,status:exit?'已完成':'观察中',return:exit?exit.open/entry.open-1:null,holding_calendar_days:exit?(Date.parse(exit.date)-Date.parse(entry.date))/86400000:null,holding_trading_days:held.length,max_drawdown:drawdown,worst_intraday_return:lows.length&&lows.length===held.length?Math.min(...lows.map(row=>row.low))/entry.open-1:null};
+ return {...event,entry_date:entry.date,entry_open:entry.open,target_exit_date:target,exit_date:exit?.date||null,exit_open:exit?.open??null,status:exit?'已完成':'观察中',return:exit?exit.open/entry.open-1:null,holding_calendar_days:exit?(Date.parse(exit.date)-Date.parse(entry.date))/86400000:null,holding_trading_days:held.length,max_drawdown:drawdown,valuation_date:exit?null:rows.at(-1).date,valuation_close:exit?null:rows.at(-1).close,unrealized_return:exit?null:rows.at(-1).close/entry.open-1,worst_intraday_return:lows.length&&lows.length===held.length?Math.min(...lows.map(row=>row.low))/entry.open-1:null};
 }
 function researchEvents(asset,threshold=Number(param('threshold'))){return rollingEvents(asset,threshold)}
 function researchControls(){

@@ -9,7 +9,8 @@
     "test:account": "node scripts/verify_account_ui.mjs",
     "test:month-picker": "node scripts/verify_month_picker.mjs",
     "test:rolling": "node scripts/verify_rolling_ui.mjs",
-    "test:holding": "node scripts/verify_holding_ui.mjs"
+    "test:holding": "node scripts/verify_holding_ui.mjs",
+    "test:unrealized": "node scripts/verify_unrealized_ui.mjs"
   },
   "devDependencies": { "playwright": "1.62.1" }
 }
