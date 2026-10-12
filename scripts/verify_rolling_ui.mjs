@@ -18,7 +18,7 @@ try{
  for(let begin=0;begin<cases.length;begin+=40){
   const batch=cases.slice(begin,begin+40);
   const actual=await page.evaluate(batch=>batch.map(config=>{
-   for(const [id,value] of Object.entries({'signal-mode':'rolling',basis:config.basis,'window-days':config.window,threshold:config.threshold,cost:config.cost_bps,start:'1991-01',capital:'100','holding-months':'1'}))document.getElementById(id).value=String(value);
+   for(const [id,value] of Object.entries({basis:config.basis,'window-days':config.window,threshold:config.threshold,cost:config.cost_bps,start:'1991-01',capital:'100','holding-months':'1'}))document.getElementById(id).value=String(value);
    const events=window.rollingQA.rawEvents(config.index_id),account=window.rollingQA.compute(config.index_id),finished=events.filter(event=>event.status==='已完成'),cost=config.cost_bps/10000,returns=finished.map(event=>(1+event.return)*(1-cost)/(1+cost)-1);
    return {summary:account.summary,event_count:events.length,completed_count:finished.length,win_rate:returns.length?returns.filter(value=>value>0).length/returns.length:null,mean_return:returns.length?returns.reduce((sum,value)=>sum+value,0)/returns.length:null,signals:config.cost_bps===0?events.map(event=>[event.signal_date,event.reference_date,event.entry_date,event.exit_date]):null};
   }),batch);
@@ -32,8 +32,8 @@ try{
  }
  console.log('浏览器逐组核对通过：1600组滚动账户与事件，800组高点、信号和买卖日期');
  await page.click('#reset');await page.click('#generate');
- assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),oldSummary,'原自然月结果变化');
- await page.click('[data-mode="rolling"]');await page.click('#generate');
+ assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),oldSummary,'默认滚动结果变化');
+
  assert.equal(await page.locator('#holding-months').inputValue(),'1');
  assert.ok(await page.locator('#window-field').isVisible());
  const events=await page.evaluate(()=>window.rollingQA.events()),account=await page.evaluate(()=>window.accountQA.data());
@@ -63,12 +63,12 @@ try{
   assert.equal((await page.evaluate(()=>window.accountQA.summary())).window_days,window);
   assert.ok((await page.locator('#rule-text').textContent()).includes(`${window}个交易日`));
  }
- await page.click('#reset');await page.click('#generate');await page.click('[data-mode="rolling"]');await page.click('#generate');
+ await page.click('#reset');await page.click('#generate');
  await page.selectOption('#threshold','10');
  await page.click('#matrixrows [data-asset="sh000300"][data-t="15"]');await page.click('#generate');
  const matrixCase=cases.find(config=>config.index_id==='sh000300'&&config.basis==='published'&&config.window===25&&config.threshold===15&&config.cost_bps===0);
  assert.equal((await page.evaluate(()=>window.researchQA.snapshot())).count,matrixCase.completed_count);
- await page.selectOption('#account-view','pnl');await page.check('#account-benchmark');
+ await page.selectOption('#account-view','pnl');await page.uncheck('#account-benchmark-hide');
  assert.ok((await page.locator('#account-chart').textContent()).includes('累计盈亏'));
  for(const [width,height] of [[390,844],[320,640],[844,390]]){
   await page.setViewportSize({width,height});
@@ -76,8 +76,8 @@ try{
   if(width===390)await page.screenshot({path:dataPath('rolling-mobile-qa.png')});
  }
  await page.click('#reset');await page.click('#generate');
- assert.ok(await page.locator('#window-field').isHidden());
+ assert.ok(await page.locator('#window-field').isVisible());
  assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),oldSummary);
  assert.deepEqual(errors,[]);
- console.log('滚动界面通过：2015年高点与入场、持仓忽略、持有一个月、双模式、窗口切换、日期范围、矩阵、成本、事件导出、盈亏对照与手机布局');
+ console.log('滚动界面通过：2015年高点与入场、持仓忽略、持有一个月、移除自然月入口、窗口切换、日期范围、矩阵、成本、事件导出、盈亏对照与手机布局');
 }finally{await browser.close()}

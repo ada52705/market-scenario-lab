@@ -74,7 +74,7 @@ def checks(payload):
         assert json.dumps(asset, ensure_ascii=False) == before, '不得修改原始研究数据'
 
 
-def references(payload):
+def references(payload, rolling_only=False):
     result = []
     fields = ('signal_date', 'entry_date', 'target_exit_date', 'exit_date', 'status',
               'return', 'max_drawdown', 'worst_intraday_return', 'holding_trading_days')
@@ -82,7 +82,7 @@ def references(payload):
         for months in PERIODS:
             monthly = monthly_events(asset, months)
             for basis in ('published', 'full', 'recent10', 'common'):
-                for window in (0, *WINDOWS):
+                for window in (WINDOWS if rolling_only else (0, *WINDOWS)):
                     for threshold in payload['thresholds']:
                         signals = (events(asset, window, threshold, basis, holding_months=months) if window
                                    else [event for event in monthly if eligible(event, basis, '1991-01') and event['monthly_return'] < -threshold / 100])
@@ -102,13 +102,14 @@ def references(payload):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--json', action='store_true', help='输出浏览器独立核对参考，不写入数据文件')
+    parser.add_argument('--rolling-only', action='store_true', help='仅核对当前滚动研究，不包含归档自然月场景')
     args = parser.parse_args()
     paths = [ROOT / 'data' / name for name in ('research.json', 'research.sqlite')]
     hashes = [hashlib.sha256(path.read_bytes()).hexdigest() for path in paths]
     payload = json.loads(paths[0].read_text(encoding='utf-8'))
     checks(payload)
     if args.json:
-        print(json.dumps(references(payload), ensure_ascii=False, separators=(',', ':')))
+        print(json.dumps(references(payload, args.rolling_only), ensure_ascii=False, separators=(',', ':')))
     else:
         print('四档持有期检查通过：月末、闰年、跨年、首个交易日卖出、信号不变、未完成事件和原始数据不变')
     assert hashes == [hashlib.sha256(path.read_bytes()).hexdigest() for path in paths]

@@ -6,7 +6,7 @@ import {chromium} from 'playwright';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 const output=name=>fileURLToPath(new URL(`../data/${name}`,import.meta.url));
-const cases=JSON.parse(execFileSync(process.env.PYTHON_EXECUTABLE||'python',['-X','utf8','scripts/test_holding.py','--json'],{cwd:root,encoding:'utf8',maxBuffer:64*1024*1024}));
+const cases=JSON.parse(execFileSync(process.env.PYTHON_EXECUTABLE||'python',['-X','utf8','scripts/test_holding.py','--json','--rolling-only'],{cwd:root,encoding:'utf8',maxBuffer:64*1024*1024}));
 const close=(actual,expected,label)=>{
  if(typeof expected==='number')assert.ok(typeof actual==='number'&&Math.abs(actual-expected)<=1e-8*Math.max(1,Math.abs(expected)),`${label}: ${actual} / ${expected}`);
  else assert.equal(actual,expected,label);
@@ -20,7 +20,7 @@ try{
  for(let begin=0;begin<cases.length;begin+=40){
   const batch=cases.slice(begin,begin+40);
   const actual=await page.evaluate(batch=>batch.map(config=>{
-   for(const [id,value] of Object.entries({'signal-mode':config.window?'rolling':'monthly',basis:config.basis,'window-days':config.window||25,threshold:config.threshold,cost:config.cost_bps,start:'1991-01',capital:100,'holding-months':config.holding_months}))document.getElementById(id).value=String(value);
+   for(const [id,value] of Object.entries({basis:config.basis,'window-days':config.window||25,threshold:config.threshold,cost:config.cost_bps,start:'1991-01',capital:100,'holding-months':config.holding_months}))document.getElementById(id).value=String(value);
    const account=window.rollingQA.compute(config.index_id),events=window.researchQA.rawEvents(config.index_id);
    const fields=['signal_date','entry_date','target_exit_date','exit_date','status','return','max_drawdown','worst_intraday_return','holding_trading_days'];
    return {summary:account.summary,trades:account.trades.map(trade=>[trade.entry_date,trade.target_exit_date,trade.exit_date,trade.net_return]),events:config.cost_bps===0?events.map(event=>fields.map(field=>event[field]??null)):null};
@@ -38,9 +38,8 @@ try{
  }
  console.log(`四档持有期独立核对通过：${cases.length}组账户、交易与事件日期/回撤/收益`);
  await page.click('#reset');await page.click('#generate');
- assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),baseline,'原自然月默认结果改变');
+ assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),baseline,'默认滚动结果改变');
  const oldTitle=await page.locator('h1').textContent(),oldRows=await page.locator('#eventrows').innerHTML();
- await page.click('[data-mode="rolling"]');
  await page.selectOption('#asset','sh000300');await page.selectOption('#window-days','10');
  await page.selectOption('#holding-months','12');await page.selectOption('#threshold','15');
  await page.selectOption('#basis','full');await page.fill('#cost','10');await page.fill('#capital','50');
@@ -48,15 +47,15 @@ try{
  assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),baseline);
  assert.equal(await page.locator('h1').textContent(),oldTitle);
  assert.equal(await page.locator('#eventrows').innerHTML(),oldRows);
- await page.selectOption('#account-view','pnl');await page.check('#account-benchmark');
+ await page.selectOption('#account-view','pnl');await page.uncheck('#account-benchmark-hide');
  await page.setViewportSize({width:1280,height:900});await page.waitForTimeout(100);
  await page.click('#present');await page.click('#present');await page.waitForTimeout(100);
  assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),baseline,'重绘应用了尚未生成的参数');
  const [oldDownload]=await Promise.all([page.waitForEvent('download'),page.click('#account-export')]);
- assert.ok(oldDownload.suggestedFilename().includes('持有3月')&&!oldDownload.suggestedFilename().includes('日窗口'));
+ assert.ok(oldDownload.suggestedFilename().includes('25日窗口_持有1月'));
  await oldDownload.saveAs(output('holding-pending-export-qa.csv'));
  const csv=await fs.readFile(output('holding-pending-export-qa.csv'),'utf8');
- assert.ok(csv.includes('2007-02-01')&&csv.includes('1000000'),'导出未保留已生成的本金及范围');
+ assert.ok(csv.includes('2007-01-15')&&csv.includes('1000000'),'导出未保留已生成的本金及范围');
  await page.click('#generate');
  const generated=await page.evaluate(()=>window.accountQA.summary());
  const expected=cases.find(config=>config.index_id==='sh000300'&&config.window===10&&config.holding_months===12&&config.basis==='full'&&config.threshold===15&&config.cost_bps===10);
@@ -70,7 +69,6 @@ try{
  // Reset is a parameter action, not an implicit new backtest.
  await page.click('#reset');assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),generated);
  await page.click('#generate');assert.deepEqual(await page.evaluate(()=>window.accountQA.summary()),baseline);
- await page.click('[data-mode="rolling"]');
  for(const months of [1,3,6,12]){
   await page.selectOption('#holding-months',String(months));await page.click('#generate');
   const event=(await page.evaluate(()=>window.rollingQA.events())).find(event=>event.signal_date==='2015-06-26');

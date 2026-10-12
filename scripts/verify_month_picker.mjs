@@ -45,7 +45,7 @@ try {
   assert.equal(await value(), '2008-10');
   assert.equal(await page.locator('#start-label').textContent(), '2008年10月');
   const asset = data.assets.find(asset => asset.id === 'sh000905');
-  const events = asset.all_month_events.filter(event => event.month >= '2008-10' && event.published && event.monthly_return < -.2 && event.status === '已完成');
+  const events = await page.evaluate(() => window.rollingQA.events().filter(event => event.status === '已完成'));
   assert.equal((await state()).events.count, events.length);
   const result = await page.evaluate(() => window.accountQA.data());
   assert.ok(result.summary.start_date >= '2008-10-01');
@@ -61,8 +61,8 @@ try {
   await open();
   await page.click('#month-shortcuts [data-start-shortcut="2016-10"]');
   await page.click('#month-apply');await page.click('#generate');
-  assert.equal((await state()).events.count, 0);
-  assert.equal((await state()).account.final_nav, 1);
+  assert.ok((await page.evaluate(() => window.rollingQA.events())).every(event => event.window_start >= '2016-10-01'));
+  assert.ok((await state()).account.start_date >= '2016-10-01');
   await open();
   await page.click('#month-shortcuts [data-start-shortcut="2026-09"]');
   assert.ok(await page.locator('#year-next').isDisabled());
